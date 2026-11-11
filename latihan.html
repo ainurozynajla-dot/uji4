@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kuis</title>
+<link rel="stylesheet" href="style.css"><link rel="stylesheet" href="tema.css">
+<script src="auth.js"></script>
+<style>
+.opts{display:grid;gap:10px;margin-top:12px}
+.opts button{text-align:left;background:var(--card);color:var(--fg);border:2px solid var(--line);border-radius:12px;padding:12px 14px;font-weight:500;min-height:46px}
+.opts button:hover:not(:disabled){border-color:var(--acc)}
+.opts .ok{border-color:var(--n)!important;background:color-mix(in srgb,var(--n) 14%,var(--card))!important}
+.opts .bad{border-color:var(--m)!important;background:color-mix(in srgb,var(--m) 12%,var(--card))!important}
+.meta{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;color:var(--muted);font-size:.9rem;margin-bottom:6px}
+.tag2{font-weight:700;color:var(--acc)}
+.pbar{height:8px;border-radius:99px;background:var(--line);overflow:hidden;margin-bottom:12px}.pbar i{display:block;height:100%;background:var(--acc);transition:width .3s}
+.fig{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px;margin:10px 0}.fig svg{width:100%;max-width:520px;display:block;margin:0 auto}
+.fig small{display:block;text-align:center;color:var(--muted);font-size:.78rem}
+.ans{display:grid;grid-template-columns:1fr;gap:12px;margin:12px 0;max-width:440px}
+.ans label{gap:6px}.ans label span{display:block}.ans input[type=text]{font:inherit;padding:10px 12px;border:1.5px solid var(--line);border-radius:10px;background:var(--card);color:var(--fg);width:100%}
+.ans input:focus{outline:none;border-color:var(--acc);box-shadow:0 0 0 3px var(--glow)}
+.ans label{color:var(--fg);font-weight:600}
+.res{font-size:.9rem;font-weight:700;min-height:1.3em}.res.ok{color:var(--n)}.res.bad{color:var(--m)}
+.sol{background:color-mix(in srgb,var(--acc) 7%,var(--card));border-left:4px solid var(--acc);border-radius:10px;padding:10px 14px;margin-top:12px}.sol p{margin:4px 0}
+.sum{width:100%;border-collapse:collapse;margin-top:10px;font-size:.92rem}.sum td{padding:6px 8px;border-bottom:1px solid var(--line)}
+</style>
+<link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#0f766e"><link rel="apple-touch-icon" href="icon-192.png"><script src="install.js" defer></script>
+</head>
+<body>
+<main>
+<a class="back" href="home.html" aria-label="Kembali ke beranda"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>Kembali ke beranda</a>
+<header class="top"><div class="ttl"><span class="badge">Kuis · konsep dan hitungan</span><h1>Kuis struktur</h1></div><div class="who"><span>10 soal acak</span></div></header>
+<p class="sub">Satu putaran berisi 10 soal campuran: konsep dan hitungan bergambar dari balok sederhana, kantilever, portal, sampai pelengkung tiga sendi. Setiap putaran baru memakai soal dan angka yang belum pernah kamu kerjakan.</p>
+<div class="card" id="box"></div>
+<p class="note">Gambar tidak berskala. Isi angka dengan titik atau koma desimal. Jawaban hitungan dianggap benar bila selisihnya kurang dari 1%. Satuan kN dan m. Ketuk “Kuis baru” di akhir untuk soal yang berbeda.</p>
+</main>
+<script>
+const $=i=>document.getElementById(i),fm=n=>(Math.abs(n)<1e-9?0:n).toFixed(2).replace(".",",");
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1)),pick=a=>a[rnd(0,a.length-1)],shuf=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=rnd(0,i);[a[i],a[j]]=[a[j],a[i]]}return a};
+// ---- riwayat soal agar tidak berulang ----
+let seen={m:[],c:[]};try{seen=JSON.parse(localStorage.getItem("anstru_kuis")||"")||seen}catch(e){}
+const saveSeen=()=>{try{localStorage.setItem("anstru_kuis",JSON.stringify(seen))}catch(e){}};
+// ---- gambar ----
+const t=(x,y,s,a="middle")=>'<text x="'+x+'" y="'+y+'" font-size="12" fill="var(--fg)" text-anchor="'+a+'">'+s+'</text>';
+const ln=(a,b,c,d,col="var(--fg)",w=2)=>'<line x1="'+a+'" y1="'+b+'" x2="'+c+'" y2="'+d+'" stroke="'+col+'" stroke-width="'+w+'"/>';
+const ar=(x,y1,y2,c="var(--m)")=>ln(x,y1,x,y2,c,2.5)+'<path d="M'+(x-5)+' '+(y2-8)+' L'+x+' '+y2+' L'+(x+5)+' '+(y2-8)+'" fill="none" stroke="'+c+'" stroke-width="2.5"/>';
+const har=(x1,x2,y,c="var(--m)")=>ln(x1,y,x2,y,c,2.5)+'<path d="M'+(x2-8)+' '+(y-5)+' L'+x2+' '+y+' L'+(x2-8)+' '+(y+5)+'" fill="none" stroke="'+c+'" stroke-width="2.5"/>';
+const tri=(x,y)=>'<path d="M'+x+' '+y+' l-9 16 h18z" fill="var(--card)" stroke="var(--fg)" stroke-width="2"/>';
+const rol=(x,y)=>tri(x,y)+'<circle cx="'+(x-4)+'" cy="'+(y+20)+'" r="2.5" fill="var(--fg)"/><circle cx="'+(x+4)+'" cy="'+(y+20)+'" r="2.5" fill="var(--fg)"/>';
+const dim=(a,b,y,s)=>ln(a,y,b,y,"var(--muted)",1.2)+ln(a,y-4,a,y+4,"var(--muted)",1.2)+ln(b,y-4,b,y+4,"var(--muted)",1.2)+t((a+b)/2,y-4,s);
+const svg=s=>'<div class="fig"><svg viewBox="0 0 360 170" role="img" aria-label="Gambar soal">'+s+'</svg><small>gambar tidak berskala</small></div>';
+const qarrows=(x1,x2,y1,y2,n,lab)=>{let s="";for(let i=0;i<=n;i++)s+=ar(x1+(x2-x1)*i/n,y1,y2);return s+t((x1+x2)/2,y1-6,lab)};
+// ---- generator soal hitungan ----
+const G={
+ss(){const L=pick([6,8,10,12]),a=rnd(1,L-1),P=20+5*rnd(0,16),RA=P*(L-a)/L,RB=P*a/L,xa=40+a/L*280;
+ return{key:"ss|"+L+"|"+a+"|"+P,tag:"Balok sederhana",fig:svg(ln(40,70,320,70,"var(--fg)",6)+tri(40,76)+rol(320,76)+ar(xa,20,64)+t(xa,14,"P = "+P+" kN")+t(40,114,"A")+t(320,114,"B")+dim(40,xa,132,"a = "+a+" m")+dim(40,320,156,"L = "+L+" m")),
+ p:"Balok sederhana sendi–rol dengan beban terpusat. Hitung reaksi tumpuan dan momen di bawah beban.",f:[["R<sub>A</sub> (kN)",RA],["R<sub>B</sub> (kN)",RB],["M di bawah beban (kN·m)",RA*a]],
+ s:["ΣM<sub>B</sub> = 0 → R<sub>A</sub> = P(L − a)/L = "+P+"·"+(L-a)+"/"+L+" = <b>"+fm(RA)+" kN</b>","ΣV = 0 → R<sub>B</sub> = P − R<sub>A</sub> = <b>"+fm(RB)+" kN</b>","M = R<sub>A</sub>·a = "+fm(RA)+"·"+a+" = <b>"+fm(RA*a)+" kN·m</b>"]}},
+ssq(){const L=pick([4,6,8,10]),q=pick([5,10,12,15,20]),RA=q*L/2,M=q*L*L/8;
+ return{key:"ssq|"+L+"|"+q,tag:"Balok sederhana",fig:svg(qarrows(40,320,34,66,8,"q = "+q+" kN/m")+ln(40,70,320,70,"var(--fg)",6)+tri(40,76)+rol(320,76)+t(40,114,"A")+t(320,114,"B")+dim(40,320,148,"L = "+L+" m")),
+ p:"Balok sederhana dengan beban merata penuh. Hitung reaksi tumpuan (R<sub>A</sub> = R<sub>B</sub>) dan momen maksimum.",f:[["R<sub>A</sub> = R<sub>B</sub> (kN)",RA],["M maks (kN·m)",M]],
+ s:["Beban total = qL = "+q+"·"+L+" = "+fm(q*L)+" kN, dibagi dua tumpuan: R<sub>A</sub> = R<sub>B</sub> = qL/2 = <b>"+fm(RA)+" kN</b>","Momen maksimum di tengah: M = qL²/8 = "+q+"·"+L+"²/8 = <b>"+fm(M)+" kN·m</b>"]}},
+ct(){const L=pick([4,5,6]),x1=rnd(1,L-2),x2=rnd(x1+1,L),P1=10+5*rnd(0,10),P2=10+5*rnd(0,10),RA=P1+P2,MA=P1*x1+P2*x2,X1=40+x1/L*280,X2=40+x2/L*280;
+ return{key:"ct|"+L+"|"+x1+"|"+x2+"|"+P1+"|"+P2,tag:"Kantilever",fig:svg('<rect x="28" y="40" width="12" height="60" fill="var(--muted)"/>'+ln(40,70,320,70,"var(--fg)",6)+ar(X1,20,64)+t(X1,14,"P₁ = "+P1+" kN")+ar(X2,30,64)+t(X2-(x2===L?24:0),24,"P₂ = "+P2+" kN")+t(34,120,"A")+dim(40,X1,134,"x₁ = "+x1+" m")+dim(40,X2,158,"x₂ = "+x2+" m")),
+ p:"Kantilever jepit–bebas dengan dua beban terpusat. Hitung reaksi vertikal dan besar momen di jepitan.",f:[["R<sub>A</sub> (kN)",RA],["|M<sub>A</sub>| (kN·m)",MA]],
+ s:["ΣV = 0 → R<sub>A</sub> = P₁ + P₂ = <b>"+fm(RA)+" kN</b>","ΣM<sub>A</sub> = 0 → |M<sub>A</sub>| = P₁x₁ + P₂x₂ = "+P1+"·"+x1+" + "+P2+"·"+x2+" = <b>"+fm(MA)+" kN·m</b>","Momen jepit bertanda negatif (serat atas tertarik)."]}},
+pt(){let L,h,q,F,z,By,Ay;do{L=pick([4,6,8]);h=pick([3,4,5]);q=pick([5,10,15]);F=pick([10,20,30]);z=rnd(1,h);By=(q*L*L/2+F*z)/L;Ay=q*L-By}while(Ay<2);
+ const zy=120-z/h*70;
+ return{key:"pt|"+[L,h,q,F,z].join("|"),tag:"Portal",fig:svg(qarrows(80,260,16,46,7,"q = "+q+" kN/m")+'<path d="M80 120 V50 H260 V120" fill="none" stroke="var(--fg)" stroke-width="6" stroke-linejoin="round"/>'+tri(80,124)+rol(260,124)+har(24,76,zy)+t(40,zy-8,"F = "+F+" kN")+t(80,160,"A")+t(260,160,"B")+t(312,90,"h = "+h+" m")+t(312,104,"z = "+z+" m")+dim(80,260,168,"L = "+L+" m")),
+ p:"Portal sendi–rol dengan beban merata di balok atas dan gaya horizontal F pada kolom kiri (setinggi z dari A). Hitung reaksi vertikal dan momen di sambungan kiri atas.",f:[["V<sub>B</sub> (kN)",By],["V<sub>A</sub> (kN)",Ay],["M sambungan kiri (kN·m)",F*z]],
+ s:["ΣM<sub>A</sub> = 0 → V<sub>B</sub>·L = qL²/2 + F·z → V<sub>B</sub> = ("+fm(q*L*L/2)+" + "+F*z+")/"+L+" = <b>"+fm(By)+" kN</b>","ΣV = 0 → V<sub>A</sub> = qL − V<sub>B</sub> = "+fm(q*L)+" − "+fm(By)+" = <b>"+fm(Ay)+" kN</b>","Momen di sambungan kiri (kolom kiri) = F·z = <b>"+fm(F*z)+" kN·m</b>","ΣH = 0 → H<sub>A</sub> = −F; rol B tidak menahan gaya horizontal."]}},
+arq(){const L=pick([8,10,12,16]),f=pick([3,4,5,6]),q=pick([5,10,15,20]),VA=q*L/2,H=q*L*L/(8*f);
+ let s="";for(let i=0;i<=6;i++){const x=60+240*i/6,tt=i/6,y=(1-tt)**2*120+2*tt*(1-tt)*(-20)+tt*tt*120;s+=ar(x,8,y-4)}
+ return{key:"arq|"+L+"|"+f+"|"+q,tag:"Pelengkung tiga sendi",fig:svg(s+t(180,2,"")+'<path d="M60 120 Q180 -20 300 120" fill="none" stroke="var(--fg)" stroke-width="6"/><circle cx="180" cy="50" r="5" fill="var(--card)" stroke="var(--fg)" stroke-width="2"/>'+t(180,34,"C")+t(234,26,"q = "+q+" kN/m")+tri(60,122)+tri(300,122)+t(60,158,"A")+t(300,158,"B")+t(330,60,"f = "+f+" m")+dim(60,300,168,"L = "+L+" m")),
+ p:"Pelengkung tiga sendi (sendi A, B, dan puncak C) dengan beban merata penuh. Hitung reaksi vertikal V<sub>A</sub> dan gaya horizontal H.",f:[["V<sub>A</sub> (kN)",VA],["H (kN)",H]],
+ s:["Simetris: V<sub>A</sub> = V<sub>B</sub> = qL/2 = <b>"+fm(VA)+" kN</b>","M<sub>C</sub> = 0 (sendi): V<sub>A</sub>·L/2 − qL²/8 − H·f = 0","H = (V<sub>A</sub>L/2 − qL²/8)/f = "+fm(VA*L/2)+" − "+fm(q*L*L/8)+" lalu dibagi "+f+" = <b>"+fm(H)+" kN</b>"]}},
+arp(){const L=pick([8,12,16]),f=pick([3,4,5,6]),P=pick([20,30,40,60,80]),a=pick([L/4,L/2]),VA=P*(L-a)/L,VB=P*a/L,H=(VA*L/2-P*(L/2-a))/f,xa=60+a/L*240,tt=a/L,ya=(1-tt)**2*120+2*tt*(1-tt)*(-20)+tt*tt*120;
+ return{key:"arp|"+[L,f,P,a].join("|"),tag:"Pelengkung tiga sendi",fig:svg('<path d="M60 120 Q180 -20 300 120" fill="none" stroke="var(--fg)" stroke-width="6"/><circle cx="180" cy="50" r="5" fill="var(--card)" stroke="var(--fg)" stroke-width="2"/>'+t(180,70,"C")+ar(xa,ya-52,ya-4)+t(xa,ya-58,"P = "+P+" kN")+tri(60,122)+tri(300,122)+t(60,158,"A")+t(300,158,"B")+t(330,60,"f = "+f+" m")+dim(60,xa,148,"a = "+a+" m")+dim(60,300,168,"L = "+L+" m")),
+ p:"Pelengkung tiga sendi dengan satu beban terpusat P pada jarak a dari A. Hitung V<sub>A</sub>, V<sub>B</sub>, dan gaya horizontal H.",f:[["V<sub>A</sub> (kN)",VA],["V<sub>B</sub> (kN)",VB],["H (kN)",H]],
+ s:["ΣM<sub>B</sub> = 0 → V<sub>A</sub> = P(L − a)/L = <b>"+fm(VA)+" kN</b>; V<sub>B</sub> = P − V<sub>A</sub> = <b>"+fm(VB)+" kN</b>","M<sub>C</sub> = 0 (tinjau bagian kiri): V<sub>A</sub>·L/2 − P·(L/2 − a) − H·f = 0","H = ("+fm(VA*L/2)+" − "+fm(P*(L/2-a))+")/"+f+" = <b>"+fm(H)+" kN</b>"]}}};
+// ---- bank soal konsep ----
+const BANK=[
+["SFD adalah diagram untuk …",["Gaya geser","Momen lentur","Gaya normal"],0,"SFD (shear force diagram) = gaya geser. Momen lentur adalah BMD, gaya normal NFD.","Konsep"],
+["Balok sederhana bentang L, satu beban P di tengah. Momen maksimumnya …",["P·L/2","P·L/4","P·L/8"],1,"R_A = P/2, sehingga M tengah = (P/2)(L/2) = P·L/4.","Balok"],
+["Tumpuan rol menahan berapa reaksi?",["Satu reaksi vertikal","Dua reaksi (V dan H)","Tiga reaksi (V, H, M)"],0,"Rol 1 reaksi, sendi 2 reaksi, jepit 3 reaksi.","Tumpuan"],
+["Momen lentur maksimum terjadi saat gaya geser V …",["Maksimum","Sama dengan nol (berubah tanda)","Sama dengan R_B"],1,"Karena dM/dx = V, momen puncak saat V = 0.","Konsep"],
+["Pada kantilever dengan beban di ujung bebas, momen terbesar ada di …",["Ujung bebas","Tengah bentang","Jepitan"],2,"Lengan momen terpanjang ada di jepitan; di ujung bebas M = 0.","Kantilever"],
+["Balok sederhana beban merata q. Momen maksimumnya …",["q·L/2","q·L²/8","q·L²/4"],1,"Reaksi qL/2, momen maksimum di tengah qL²/8.","Balok"],
+["Pada pelengkung tiga sendi, momen di sendi puncak C selalu …",["Maksimum","Sama dengan V_A","Nol"],2,"Sendi tidak menahan momen: M_C = 0, dipakai untuk mencari H.","Pelengkung"],
+["Syarat keseimbangan struktur bidang adalah …",["ΣH = 0, ΣV = 0, ΣM = 0","ΣH = 0 saja","ΣV = ΣM"],0,"Tidak bergeser horizontal, tidak bergeser vertikal, tidak berputar.","Konsep"],
+["Pada portal, sambungan kaku antara kolom dan balok akan …",["Meneruskan momen dari kolom ke balok","Membuat momen sama dengan nol","Hanya menahan gaya geser"],0,"Sudut sambungan tetap, sehingga momen berpindah utuh antar batang.","Portal"],
+["Pelengkung tiga sendi dengan beban merata penuh dan bentuk parabola mengalami terutama …",["Momen lentur besar","Gaya tekan (momen ≈ 0)","Gaya tarik"],1,"Garis tekan berimpit dengan sumbu busur parabola, jadi momen ≈ 0.","Pelengkung"],
+["Gaya horizontal H pada pelengkung tiga sendi dicari dari syarat …",["M_C = 0","V = 0 di tumpuan","N = 0"],0,"Sendi puncak tidak menahan momen: M_C = 0.","Pelengkung"],
+["Pada balok sederhana, gaya rem kendaraan menimbulkan …",["Momen lentur saja","Gaya normal pada balok","Tidak ada pengaruh"],1,"Gaya rem searah sumbu balok, ditahan sendi A sehingga menjadi gaya normal.","Balok"],
+["Reaksi jepit terdiri dari …",["V saja","V dan H","V, H, dan M"],2,"Jepit mengekang translasi dan rotasi: tiga reaksi.","Tumpuan"]];
+// ---- putaran ----
+let R=[],idx=0,res=[],checked=false;
+function newRound(){
+ let pool=BANK.map((_,i)=>i).filter(i=>!seen.m.includes(i));if(pool.length<4){seen.m=[];pool=BANK.map((_,i)=>i)}
+ const ms=shuf(pool).slice(0,4);seen.m.push(...ms);
+ const cs=shuf(Object.keys(G)).map(k=>{let p,n=0;do{p=G[k]();n++}while(seen.c.includes(p.key)&&n<40);seen.c.push(p.key);return{kind:"calc",...p}});
+ if(seen.c.length>600)seen.c=seen.c.slice(-300);saveSeen();
+ R=shuf(ms.map(i=>({kind:"mcq",i})).concat(cs));idx=0;res=[];render();
+}
+function render(){
+ const b=$("box");checked=false;
+ if(idx>=R.length){const sc=res.filter(r=>r.ok).length;
+  b.innerHTML='<h2 style="margin:0">Skor kamu '+sc+' dari '+R.length+'</h2><p>'+(sc>=9?"Luar biasa. Coba putaran baru untuk soal yang berbeda.":sc>=6?"Cukup baik. Baca ulang pembahasan yang salah, lalu coba putaran baru.":"Jangan khawatir. Tinjau teori di tab struktur, lalu coba putaran baru.")+'</p><table class="sum">'+res.map((r,i)=>'<tr><td>'+(i+1)+'</td><td>'+r.tag+'</td><td>'+r.kind+'</td><td class="'+(r.ok?"ok":"bad")+'" style="font-weight:700;color:var(--'+(r.ok?"n":"m")+')">'+(r.ok?"Benar":"Salah")+'</td></tr>').join("")+'</table><div class="row"><button id="again">🔀 Kuis baru (soal acak baru)</button></div>';
+  $("again").onclick=newRound;return}
+ const q=R[idx],tag=q.kind==="mcq"?BANK[q.i][4]:q.tag;
+ let h='<div class="pbar"><i style="width:'+(idx/R.length*100)+'%"></i></div><div class="meta"><span>Soal '+(idx+1)+' dari '+R.length+'</span><span class="tag2">'+tag+' · '+(q.kind==="mcq"?"konsep":"hitungan")+'</span></div>';
+ if(q.kind==="mcq"){const d=BANK[q.i];h+='<h2 style="margin:0 0 4px">'+d[0]+'</h2><div class="opts">'+d[1].map((o,i)=>'<button data-i="'+i+'">'+o+'</button>').join("")+'</div><div class="sol" id="fb" hidden></div>';b.innerHTML=h+'<div class="row"><button id="nx" hidden>Lanjut</button></div>';
+  b.querySelectorAll(".opts button").forEach(x=>x.onclick=()=>{const ok=+x.dataset.i===d[2];res.push({ok,tag:d[4],kind:"konsep"});
+   b.querySelectorAll(".opts button").forEach((y,j)=>{y.disabled=true;if(j===d[2])y.classList.add("ok");else if(y===x)y.classList.add("bad")});
+   $("fb").hidden=false;$("fb").innerHTML="<p><b>"+(ok?"Benar.":"Belum tepat.")+"</b> "+d[3]+"</p>";$("nx").hidden=false;$("nx").onclick=()=>{idx++;render()}});return}
+ h+='<p style="margin:0">'+q.p+'</p>'+q.fig+'<div class="ans">'+q.f.map((f,i)=>'<div><label><span>'+f[0]+'</span><input type="text" inputmode="decimal" id="in'+i+'" autocomplete="off"></label><div class="res" id="rs'+i+'"></div></div>').join("")+'</div><div class="row"><button id="ck">Periksa jawaban</button><button id="nx" class="chip" hidden>Lanjut</button></div><div class="sol" id="fb" hidden></div>';
+ b.innerHTML=h;
+ $("ck").onclick=()=>{if(checked)return;let all=true;q.f.forEach((f,i)=>{const v=parseFloat($("in"+i).value.replace(",","."));const ok=isFinite(v)&&Math.abs(v-f[1])<=Math.max(.05,Math.abs(f[1])*.01);if(!ok)all=false;const r=$("rs"+i);r.className="res "+(ok?"ok":"bad");r.textContent=ok?"✓ Benar":"✗ Jawaban: "+fm(f[1])});
+  checked=true;res.push({ok:all,tag:q.tag,kind:"hitungan"});$("ck").disabled=true;$("fb").hidden=false;$("fb").innerHTML=q.s.map(x=>"<p>"+x+"</p>").join("");$("nx").hidden=false;$("nx").onclick=()=>{idx++;render()}};
+}
+newRound();
+</script>
+<script src="tema.js"></script><script src="tema-anim.js"></script>
+</body>
+</html>

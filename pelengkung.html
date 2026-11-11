@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bagaimana pelengkung menahan beban?</title>
+<link rel="stylesheet" href="style.css"><link rel="stylesheet" href="tema.css">
+<script src="auth.js"></script>
+<link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#0f766e"><link rel="apple-touch-icon" href="icon-192.png"><script src="install.js" defer></script>
+</head>
+<body data-mode="arch">
+<main>
+<a class="back" href="home.html" aria-label="Kembali ke beranda"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>Kembali ke beranda</a>
+<header class="top"><div class="ttl"><span class="badge">Analisa Struktur · Pelengkung tiga sendi</span><h1>Bagaimana pelengkung menahan beban?</h1></div><div class="who"><span>Kajian pelengkung</span></div></header>
+<p class="sub">Pelengkung tiga sendi menyalurkan beban lewat gaya tekan di sepanjang busur. Sendi di puncak membuat momen di titik itu nol.</p>
+
+<div class="tabs"><button class="chip on" id="t2">📈 Tampilan 2D</button><button class="chip" id="t3">🧊 Tampilan 3D</button></div>
+<div class="card" id="card2d"><canvas id="cv" aria-label="Struktur dengan diagram gaya dalam"></canvas></div>
+<div class="row">
+  <button id="play">⏸ Jeda</button>
+  <label class="chk"><input type="checkbox" id="cV" checked> SFD</label>
+  <label class="chk"><input type="checkbox" id="cM" checked> BMD</label>
+  <label class="chk"><input type="checkbox" id="cN"> NFD</label>
+</div>
+<p class="note">Geser untuk menyesuaikan parameter. Diagram positif digambar di sisi kiri arah batang A→B. Konvensi: N negatif = tekan.</p>
+
+<div class="ctrl" id="ctrl"></div>
+
+<div class="card story"><h2>Cerita saat ini</h2><p id="story"></p></div>
+
+<details class="card" id="theory" open><summary>Dasar teori &amp; rumus ringkas</summary><div class="thgrid"><div class="th"><h3>Reaksi &amp; gaya horizontal</h3><div class="fx">V<sub>B</sub> = (qL²/2 + P·a)/L, V<sub>A</sub> = qL + P − V<sub>B</sub><br>M<sub>C</sub> = 0 → H = [V<sub>A</sub>L/2 − qL²/8 − P·max(0, L/2 − a)]/f</div><p>Sendi A dan B menahan gaya vertikal dan horizontal.</p></div>
+<div class="th"><h3>Gaya dalam sepanjang busur</h3><div class="fx">M(x) = M<sub>0</sub>(x) − H·y(x)<br>N = −H cos θ − V<sub>0</sub> sin θ<br>V = V<sub>0</sub> cos θ − H sin θ<br>Parabola: y = 4fx(L−x)/L²</div><p>Beban q per meter proyeksi horizontal. Pada parabola dengan q penuh, M = 0.</p></div></div></details>
+
+<details class="card" open><summary>Langkah hitung (diperbarui langsung)</summary><div id="steps"></div></details>
+
+<div class="stats">
+  <div class="stat"><small>Reaksi vertikal A</small><span id="s1">–</span></div>
+  <div class="stat"><small>Reaksi vertikal B</small><span id="s2">–</span></div>
+  <div class="stat"><small>Momen |M| maks</small><span id="s3">–</span></div>
+  <div class="stat"><small>Gaya horizontal H</small><span id="s4">–</span></div>
+</div>
+
+<p class="note">Pelengkung simetris tiga sendi, sendi puncak di L/2. Beban vertikal merata penuh dan satu beban titik bergerak. Aplikasi untuk pembelajaran, bukan dasar tunggal perencanaan struktur. Satuan kN dan m.</p>
+</main>
+<script src="struktur.js"></script>
+<script src="tema.js"></script><script src="tema-anim.js"></script></body>
+</html>

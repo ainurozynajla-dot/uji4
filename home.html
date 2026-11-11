@@ -1,0 +1,572 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ANSTRUCEDU: belajar gaya dalam struktur</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;800&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script>try{if(sessionStorage.getItem('anstru_enter')){sessionStorage.removeItem('anstru_enter');document.documentElement.classList.add('from-login')}}catch(e){}</script>
+<script>/* palet tersimpan + intro sekali per sesi (tambahkan ?intro untuk memutar ulang) */
+try{var d=document.documentElement,k=localStorage.getItem('anstru_pal');if(k)d.setAttribute('data-pal',k);
+var rm=window.matchMedia&&matchMedia('(prefers-reduced-motion:reduce)').matches;
+if(!rm&&(location.search.indexOf('intro')>-1||!sessionStorage.getItem('anstru_hi'))){d.classList.add('hi-on');sessionStorage.setItem('anstru_hi','1')}}catch(e){}</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="auth.js"></script>
+<style>
+:root{--paper:#edf3f4;--sheet:#ffffff;--ink:#0b3b41;--steel:#4f6b72;--line:#cfe0e2;--signal:#f4b73f;--v:#0e7c86;--m:#dc2626;--n:#16834a;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root{--paper:#0d1f23;--sheet:#14292e;--ink:#e6f1f2;--steel:#9bb5ba;--line:#27424a;--v:#60a5fa;--m:#f87171;--n:#4ade80}}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:72px;background:var(--paper)}
+body{margin:0;background:var(--paper);color:var(--ink);font:17px/1.6 Figtree,system-ui,sans-serif}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--v);outline-offset:3px;border-radius:4px}
+.wrap{max-width:1120px;margin:0 auto;padding:0 20px}
+/* navigasi */
+.nav{position:sticky;top:0;z-index:10;background:color-mix(in srgb,var(--paper) 88%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;align-items:center;gap:22px;height:60px}
+.brand{font-weight:900;font-size:1.15rem;letter-spacing:-.02em;text-decoration:none;margin-right:auto}
+.brand i{font-style:normal;background:var(--signal);color:#0b3b41;padding:2px 8px;margin-right:6px;border-radius:3px}
+.nav a.l{text-decoration:none;font-size:.95rem;color:var(--steel);font-weight:500}
+.nav a.l:hover{color:var(--ink)}
+.nav .who{font-size:.9rem;color:var(--steel)}
+.btn{display:inline-block;background:var(--signal);color:#0b3b41;font:700 1rem Figtree,sans-serif;text-decoration:none;border:0;border-radius:6px;padding:12px 22px;cursor:pointer;box-shadow:0 3px 0 #b88f00}
+.btn:active{transform:translateY(2px);box-shadow:0 1px 0 #b88f00}
+.btn.ghost{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 2px var(--ink)}
+.btn.sm{padding:7px 14px;font-size:.9rem;box-shadow:none}
+@media (max-width:760px){.nav a.l{display:none}}
+/* hero */
+.hero{background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:40px 40px;background-position:-1px -1px;border-bottom:1px solid var(--line)}
+.hero .wrap{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:40px;align-items:center;padding-top:56px;padding-bottom:56px}
+h1{font-weight:900;font-size:clamp(2.3rem,5.2vw,4rem);line-height:1.02;letter-spacing:-.035em;margin:0 0 18px}
+.lead{font-size:1.12rem;color:var(--steel);max-width:44ch;margin:0 0 26px}
+.cta{display:flex;gap:12px;flex-wrap:wrap}
+.drafting{background:var(--sheet);border:1.5px solid var(--line);border-radius:4px;padding:14px;box-shadow:8px 8px 0 var(--ink)}
+.drafting svg{width:100%;height:auto;display:block}
+.drafting label{display:flex;align-items:center;gap:12px;font-size:.92rem;color:var(--steel);margin-top:6px}
+.drafting input{flex:1;accent-color:var(--v);height:24px}
+.drafting b{color:var(--ink);min-width:6.5ch}
+.readout{display:flex;gap:18px;flex-wrap:wrap;font-size:.9rem;margin-top:8px}
+.readout span{color:var(--steel)}.readout b{font-weight:700}
+@media (max-width:860px){.hero .wrap{grid-template-columns:1fr;padding-top:36px}.drafting{box-shadow:5px 5px 0 var(--ink)}}
+/* modul */
+section.s{padding:72px 0 0}
+h2{font-weight:900;font-size:clamp(1.7rem,3.4vw,2.5rem);letter-spacing:-.025em;line-height:1.1;margin:0 0 10px}
+.sec-sub{color:var(--steel);max-width:56ch;margin:0 0 30px}
+.mod{display:grid;grid-template-columns:160px 1fr auto;gap:28px;align-items:center;padding:26px 0;border-top:1px solid var(--line);text-decoration:none}
+.mod:last-child{border-bottom:1px solid var(--line)}
+.mod svg{width:160px;height:80px;stroke:var(--ink);fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.mod h3{margin:0 0 4px;font-size:1.4rem;letter-spacing:-.02em}
+.mod p{margin:0;color:var(--steel);max-width:52ch}
+.mod .go{font-weight:700;border-bottom:3px solid var(--signal);padding-bottom:2px;white-space:nowrap}
+.mod:hover h3{text-decoration:underline;text-decoration-color:var(--signal);text-decoration-thickness:4px;text-underline-offset:4px}
+@media (max-width:700px){.mod{grid-template-columns:1fr;gap:10px}.mod svg{width:130px;height:66px}}
+/* urutan belajar: ini memang urutan */
+.flow{display:grid;grid-template-columns:repeat(4,1fr);gap:0;counter-reset:st;margin:0;padding:0;list-style:none;border:1.5px solid var(--line);background:var(--sheet)}
+.flow li{counter-increment:st;padding:20px 18px;border-right:1px solid var(--line)}
+.flow li:last-child{border:0}
+.flow li::before{content:counter(st);display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--ink);color:var(--paper);font-weight:700;margin-bottom:10px}
+.flow b{display:block;font-size:1.05rem;margin-bottom:4px}
+.flow span{font-size:.93rem;color:var(--steel);line-height:1.5;display:block}
+.flow li:nth-child(2) b{color:var(--v)}.flow li:nth-child(3) b{color:var(--m)}.flow li:nth-child(4) b{color:var(--n)}
+@media (max-width:860px){.flow{grid-template-columns:1fr 1fr}.flow li{border-bottom:1px solid var(--line)}}
+@media (max-width:480px){.flow{grid-template-columns:1fr}}
+/* penutup */
+.end{margin-top:72px;background:var(--ink);color:var(--paper)}
+.end .wrap{display:flex;gap:24px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding-top:44px;padding-bottom:44px}
+@media (prefers-color-scheme:dark){.end{background:var(--sheet);color:var(--ink)}}
+.end h2{margin:0;max-width:20ch}
+footer{font-size:.85rem;color:var(--steel);padding:22px 0 30px}
+footer .wrap{display:flex;gap:16px;flex-wrap:wrap;justify-content:space-between}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.btn{transition:none}}
+
+/* tambahan: toggle, tab diagram, contoh, kuis, FAQ */
+.mode{display:flex;gap:6px;margin-bottom:10px}
+.mode button,.tb button{font:600 .92rem Figtree,sans-serif;color:var(--ink);background:transparent;border:1.5px solid var(--line);border-radius:4px;padding:6px 14px;cursor:pointer}
+.mode button[aria-pressed=true],.tb button[aria-selected=true]{background:var(--ink);color:var(--paper)}
+.tb{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+.pnl{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px;align-items:center;background:var(--sheet);border:1.5px solid var(--line);padding:26px}
+.pnl[hidden]{display:none}
+.pnl h3{font-size:1.5rem;letter-spacing:-.02em;margin:0 0 8px}
+.pnl p{margin:0 0 12px;color:var(--steel)}
+.fm{font:italic 1rem/1.7 Georgia,serif;border-left:4px solid var(--signal);padding:4px 12px;background:var(--paper)}
+.pnl svg{width:100%;height:auto}
+@media (max-width:760px){.pnl{grid-template-columns:1fr;padding:18px}}
+.exs{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.ex{border:1.5px solid var(--line);background:var(--sheet);padding:22px}
+.ex h3{margin:0 0 4px;font-size:1.2rem}.ex small{color:var(--steel)}
+.ex dl{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;margin:14px 0}
+.ex dt{color:var(--steel)}.ex dd{margin:0;font-weight:700;font-variant-numeric:tabular-nums}
+.ex a{font-weight:700;text-decoration:none;border-bottom:3px solid var(--signal)}
+@media (max-width:760px){.exs{grid-template-columns:1fr}}
+.quiz{border:1.5px solid var(--line);background:var(--sheet);padding:24px;max-width:720px}
+.quiz h3{margin:0 0 14px;font-size:1.2rem;line-height:1.35}
+.opts{display:grid;gap:10px}
+.opts button{text-align:left;font:500 1rem Figtree,sans-serif;color:var(--ink);background:var(--paper);border:2px solid var(--line);border-radius:4px;padding:11px 14px;cursor:pointer}
+.opts button:hover:not(:disabled){border-color:var(--ink)}
+.opts .ok{border-color:var(--n);background:color-mix(in srgb,var(--n) 16%,var(--paper))}
+.opts .bad{border-color:var(--m);background:color-mix(in srgb,var(--m) 14%,var(--paper))}
+.fb{min-height:3.2em;margin:14px 0 0;color:var(--steel);font-size:.95rem}
+.qb{display:flex;justify-content:space-between;align-items:center;margin-top:10px;font-size:.9rem;color:var(--steel)}
+details.q{border-top:1px solid var(--line);padding:16px 0}
+details.q:last-of-type{border-bottom:1px solid var(--line)}
+details.q summary{font-weight:700;font-size:1.05rem;cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:12px}
+details.q summary::after{content:"+";font-size:1.4rem;line-height:1;transition:transform .2s}
+details.q[open] summary::after{transform:rotate(45deg)}
+details.q p{margin:10px 0 0;color:var(--steel);max-width:62ch}
+
+/* tipografi baru: Unbounded untuk judul, Figtree untuk isi */
+h1,h2,.brand,.mod h3,.pnl h3,.ex h3,.quiz h3,.flow b{font-family:Unbounded,Figtree,sans-serif}
+h1{font-size:clamp(1.9rem,4.4vw,3.1rem);line-height:1.12;letter-spacing:-.03em;font-weight:800}
+h2{font-size:clamp(1.35rem,2.8vw,2rem);line-height:1.2;letter-spacing:-.02em;font-weight:700}
+.brand{font-size:1.05rem;font-weight:800;letter-spacing:-.02em}
+.mod h3{font-size:1.15rem;font-weight:700}.pnl h3{font-size:1.2rem;font-weight:700;line-height:1.3}
+.ex h3,.quiz h3{font-size:1.05rem;font-weight:700}.flow b{font-size:.95rem;font-weight:700}
+.lead{font-size:1.15rem}
+.hero{background-image:linear-gradient(color-mix(in srgb,var(--line) 70%,transparent) 1px,transparent 1px),linear-gradient(90deg,color-mix(in srgb,var(--line) 70%,transparent) 1px,transparent 1px)}
+.drafting{border-radius:22px 22px 22px 6px;box-shadow:0 14px 34px rgba(11,59,65,.14)}
+.pnl,.ex,.quiz,.flow{border-radius:18px}
+.flow li:first-child{border-radius:16px 0 0 16px}.flow li:last-child{border-radius:0 16px 16px 0}
+.btn{border-radius:12px}
+.end{border-radius:28px 28px 0 0}
+
+/* interaktif / sentuh */
+a,button,summary,.hot{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.btn,.mode button,.tb button,.opts button{min-height:44px}
+.btn:active,.mod:active,.tb button:active,.opts button:active{transform:scale(.97)}
+#demo{touch-action:pan-y;cursor:grab;user-select:none}#demo.drag{cursor:grabbing}
+.tip2{font-size:.85rem;color:var(--steel);margin:4px 0 0}
+.rail{display:block}
+@media (max-width:700px){.rail{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;margin:0 -20px;padding:4px 20px 16px;scrollbar-width:none}.rail::-webkit-scrollbar{display:none}
+.rail .mod{flex:0 0 82%;scroll-snap-align:center;border:1.5px solid var(--line);border-radius:20px;background:var(--sheet);padding:20px}.rail .mod:last-child{border-bottom:1.5px solid var(--line)}}
+.swipe{display:none;font-size:.85rem;color:var(--steel);margin:-12px 0 8px}@media (max-width:700px){.swipe{display:block}}
+.explore{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:20px;align-items:center;background:var(--sheet);border:1.5px solid var(--line);border-radius:22px;padding:18px}
+.explore svg{width:100%;height:auto;touch-action:manipulation}
+.hot{cursor:pointer}.hot .ring{fill:var(--signal);stroke:var(--ink);stroke-width:2;transition:r .15s}
+.hot .halo{fill:var(--signal);opacity:.35;animation:pulse 2s ease-out infinite;transform-box:fill-box;transform-origin:center}
+.hot.on .ring{fill:var(--ink)}.hot.on .halo{animation:none;opacity:0}
+.hot:focus-visible{outline:none}.hot:focus-visible .ring{stroke:var(--v);stroke-width:4}
+@keyframes pulse{from{transform:scale(.6);opacity:.55}to{transform:scale(1.7);opacity:0}}
+@media (prefers-reduced-motion:reduce){.hot .halo{animation:none}}
+.infob{min-height:150px;border-left:4px solid var(--signal);padding:4px 0 4px 16px}
+.infob h3{font-family:Unbounded,Figtree,sans-serif;font-size:1.05rem;margin:0 0 8px}.infob p{margin:0;color:var(--steel)}
+@media (max-width:760px){.explore{grid-template-columns:1fr}.infob{min-height:0}}
+.fab{display:none;position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:20;box-shadow:0 8px 20px rgba(11,59,65,.3)}
+@media (max-width:760px){.fab{display:inline-block}}
+
+/* pratinjau aplikasi: prototipe yang bisa diketuk */
+.demo2{display:grid;grid-template-columns:minmax(0,1fr) 310px;gap:40px;align-items:center}
+.demo2 ul{margin:14px 0 0;padding-left:1.2em;color:var(--steel)}.demo2 li{margin:6px 0}
+.phone{width:300px;max-width:100%;margin:0 auto;border:10px solid var(--ink);border-radius:42px;background:var(--paper);box-shadow:0 22px 44px rgba(11,59,65,.25);overflow:hidden;position:relative}
+.phone::before{content:"";position:absolute;top:8px;left:50%;width:84px;height:20px;margin-left:-42px;background:var(--ink);border-radius:12px;z-index:2}
+.scr{padding:44px 14px 0;min-height:470px;display:flex;flex-direction:column}
+.scr h3{font:700 1rem Unbounded,Figtree,sans-serif;margin:0 0 2px}.scr small{color:var(--steel)}
+.scr .card2{background:var(--sheet);border:1.5px solid var(--line);border-radius:16px;margin:10px 0;padding:8px}
+.scr svg{width:100%;height:auto;display:block}
+.chips{display:flex;gap:6px}
+.chips button{flex:1;min-height:40px;font:700 .85rem Figtree,sans-serif;border:2px solid var(--line);background:var(--sheet);color:var(--ink);border-radius:12px;cursor:pointer}
+.chips button[aria-pressed=true][data-k=V]{background:var(--v);border-color:var(--v);color:#fff}
+.chips button[aria-pressed=true][data-k=M]{background:var(--m);border-color:var(--m);color:#fff}
+.chips button[aria-pressed=true][data-k=N]{background:var(--n);border-color:var(--n);color:#fff}
+.pnote{font-size:.82rem;color:var(--steel);min-height:2.6em;margin:2px 0 0}
+.bar{margin:auto -14px 0;display:grid;grid-template-columns:repeat(3,1fr);border-top:1.5px solid var(--line);background:var(--sheet)}
+.bar button{min-height:54px;border:0;background:transparent;color:var(--steel);font:600 .8rem Figtree,sans-serif;cursor:pointer;border-top:3px solid transparent}
+.bar button[aria-selected=true]{color:var(--ink);border-top-color:var(--signal)}
+@media (max-width:860px){.demo2{grid-template-columns:1fr}}
+
+/* animasi saat scroll */
+#prog{position:fixed;left:0;top:0;height:4px;width:100%;background:var(--signal);transform:scaleX(0);transform-origin:left;z-index:30}
+.hero{background-position:-1px calc(-1px + var(--sy,0px))}
+.rv{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease;transition-delay:var(--d,0s)}
+.rv.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}}
+#alur{height:380vh;margin-top:72px;position:relative}
+#alur .stick{position:sticky;top:60px;height:calc(100vh - 60px);display:flex;align-items:center}
+#alur .st{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:32px;align-items:center;width:100%}
+#alur h2{margin-bottom:10px}
+#cap2{min-height:5.2em;color:var(--steel);margin:0 0 10px}
+.jump{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.jump button{min-height:44px;font:700 .9rem Figtree,sans-serif;color:var(--ink);background:var(--sheet);border:2px solid var(--line);border-radius:12px;padding:6px 14px;cursor:pointer}
+.jump button[aria-pressed=true]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+#sv2{cursor:pointer;touch-action:manipulation}
+@media (max-width:860px){#alur{height:340vh}#alur .st{grid-template-columns:1fr;gap:10px;align-content:center}#alur .drafting{order:-1;padding:8px}#alur h2{font-size:1.15rem;margin-bottom:4px}#cap2{min-height:4.6em;font-size:.95rem;margin-bottom:4px}.jump{margin-top:6px}.jump button{min-height:40px;padding:4px 10px}#alur .tip2{display:none}}
+
+/* modul sebagai kotak yang bisa disentuh */
+.mod{border:1.5px solid var(--line);border-radius:20px;background:var(--sheet);padding:22px;box-shadow:0 2px 0 var(--line)}
+.mod:last-child{border-bottom:1.5px solid var(--line)}
+.mod.in{transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease;transition-delay:0s}
+.mod .go{display:inline-block;background:var(--signal);color:#0b3b41;border:0;border-radius:12px;padding:11px 18px;min-height:44px;line-height:1.3}
+.mod:hover{border-color:var(--ink)}
+.mod:active{transform:scale(.97);box-shadow:none}
+.mod:focus-visible{outline:3px solid var(--v);outline-offset:3px}
+@media (min-width:701px){
+ .rail{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+ .mod{display:flex;flex-direction:column;align-items:flex-start;gap:14px;border-top:1.5px solid var(--line)}
+ .mod svg{width:100%;max-width:190px;height:88px}
+ .mod .go{margin-top:auto}
+ .mod:hover{transform:translateY(-5px);box-shadow:0 16px 32px rgba(11,59,65,.2)}
+}
+
+/* ===== kaca & gradasi halus ===== */
+:root{--mesh:radial-gradient(900px 520px at 8% -6%,rgba(20,160,168,.30),transparent 60%),radial-gradient(760px 480px at 96% 4%,rgba(244,183,63,.24),transparent 62%),radial-gradient(900px 600px at 78% 100%,rgba(96,165,250,.22),transparent 60%),radial-gradient(700px 500px at 0% 90%,rgba(14,124,134,.16),transparent 60%),#eaf3f4}
+@media (prefers-color-scheme:dark){:root{--mesh:radial-gradient(900px 520px at 8% -6%,rgba(20,160,168,.38),transparent 60%),radial-gradient(760px 480px at 96% 4%,rgba(244,183,63,.13),transparent 62%),radial-gradient(900px 600px at 78% 100%,rgba(96,165,250,.24),transparent 60%),radial-gradient(700px 500px at 0% 90%,rgba(14,124,134,.24),transparent 60%),#08171b}}
+html{background:transparent}
+body{background:var(--mesh) fixed}
+.hero{background-image:none;border-bottom:0}
+.drafting,.explore,.pnl,.ex,.quiz,.flow,.mod,.scr .card2{background:color-mix(in srgb,var(--sheet) 58%,transparent);backdrop-filter:blur(16px) saturate(1.5);-webkit-backdrop-filter:blur(16px) saturate(1.5);border:1px solid rgba(255,255,255,.65);box-shadow:0 12px 36px rgba(14,124,134,.14),inset 0 1px 0 rgba(255,255,255,.5)}
+@media (prefers-color-scheme:dark){.drafting,.explore,.pnl,.ex,.quiz,.flow,.mod,.scr .card2{border-color:rgba(255,255,255,.12);box-shadow:0 12px 36px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.07)}}
+.phone{background:color-mix(in srgb,var(--paper) 50%,transparent);border-color:#0b3b41;box-shadow:0 26px 60px rgba(14,124,134,.3)}
+.bar{background:color-mix(in srgb,var(--sheet) 60%,transparent);backdrop-filter:blur(10px)}
+.btn{background:linear-gradient(135deg,#ffd166,#f4b73f);box-shadow:0 8px 22px rgba(244,183,63,.42)}
+.btn:active{box-shadow:0 2px 8px rgba(244,183,63,.4)}
+.btn.ghost{background:rgba(255,255,255,.3);backdrop-filter:blur(8px);box-shadow:inset 0 0 0 1.5px var(--ink)}
+.mode button,.tb button,.jump button,.chips button,.opts button{background:color-mix(in srgb,var(--sheet) 55%,transparent);backdrop-filter:blur(8px)}
+.mode button[aria-pressed=true],.tb button[aria-selected=true],.jump button[aria-pressed=true]{background:linear-gradient(135deg,#0b3b41,#0e7c86);color:#fff;border-color:transparent}
+.hot .ring{fill:#ffd166}
+.end{background:radial-gradient(500px 300px at 90% 0%,rgba(244,183,63,.35),transparent 62%),linear-gradient(135deg,#0b3b41,#0e7c86 70%,#14a0a8);color:#fff}
+h1{background:linear-gradient(100deg,var(--ink) 45%,var(--v));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.drafting svg text{paint-order:stroke}
+/* navigasi atas: dipertahankan seperti semula */
+.nav .btn{background:var(--signal);box-shadow:none}
+/* transisi masuk dari halaman login */
+html.from-login::after{content:"";position:fixed;inset:0;z-index:99999;pointer-events:none;background:radial-gradient(circle at 50% 45%,#0f343b,#06161a 72%);animation:enterov .9s cubic-bezier(.4,0,.2,1) .1s forwards}
+@keyframes enterov{to{opacity:0;visibility:hidden}}
+html.from-login .nav{animation:navin .8s cubic-bezier(.2,.7,.2,1) .35s backwards}
+html.from-login .hero .wrap>*{animation:herorise .9s cubic-bezier(.2,.7,.2,1) backwards}
+html.from-login .hero .wrap>*:nth-child(1){animation-delay:.45s}
+html.from-login .hero .wrap>*:nth-child(2){animation-delay:.6s}
+@keyframes navin{from{opacity:0;transform:translateY(-100%)}}
+@keyframes herorise{from{opacity:0;transform:translateY(28px)}}
+@media (prefers-reduced-motion:reduce){html.from-login::after{display:none}html.from-login .nav,html.from-login .hero .wrap>*{animation:none}}
+
+/* ===== kelas (hero baru) ===== */
+.kelas{border-bottom:1px solid var(--line);padding:36px 0 44px;overflow:hidden}
+.kelas .wrap{text-align:center}
+.kelas h1{margin:0 0 10px}
+.kelas .lead{margin:0 auto 22px;max-width:56ch}
+.stage{position:relative;max-width:1000px;margin:0 auto;border-radius:18px;overflow:hidden;box-shadow:8px 8px 0 var(--ink);border:1.5px solid var(--ink);background:#efe3cb}
+.stage svg{display:block;width:100%;height:auto;transform-origin:90% 60%;animation:masuk 2.2s cubic-bezier(.22,.8,.2,1) both}
+.pintu{position:absolute;inset:0;display:flex;pointer-events:none}
+.pintu i{flex:1;background:linear-gradient(90deg,#8a5a2b,#a8733a);animation:buka 1.4s .5s cubic-bezier(.7,0,.3,1) forwards}
+.pintu i:last-child{animation-name:buka2}
+@keyframes buka{to{transform:translateX(-101%)}}
+@keyframes buka2{to{transform:translateX(101%)}}
+@keyframes masuk{from{transform:scale(1.35)}to{transform:scale(1)}}
+.hs{cursor:pointer;outline:none}
+.hs .lift{transition:transform .25s}
+.hs:hover .lift,.hs:focus-visible .lift{transform:translateY(-8px)}
+.hs:focus-visible .lift{filter:drop-shadow(0 0 6px #f4b73f)}
+.kelas .hint{font-size:.92rem;color:var(--steel);margin:16px 0 0}
+.h1l{font-weight:900;font-size:clamp(1.8rem,3.6vw,2.8rem);line-height:1.05;letter-spacing:-.03em;margin:0 0 14px}
+@media (prefers-reduced-motion:reduce){.stage svg,.pintu i{animation:none}.pintu{display:none}}
+</style>
+<link rel="stylesheet" href="home-anim.css">
+<link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#0f766e"><link rel="apple-touch-icon" href="icon-192.png"><script src="install.js" defer></script>
+</head>
+<body>
+<div id="hintro" aria-hidden="true">
+  <div class="hi-c"><i></i><i></i></div>
+  <div class="hi-glow"></div><div class="hi-grid"></div>
+  <div class="hi-in">
+    <svg class="hi-svg" viewBox="0 0 560 260" aria-hidden="true">
+      <path class="deck" pathLength="1" d="M40 130H520" style="--d:.2s"/>
+      <path pathLength="1" d="M40 134l-16 26h32zM520 134l-16 26h32z" style="--d:.5s"/>
+      <path pathLength="1" d="M120 130L170 70H390L440 130" style="--d:.55s"/>
+      <path pathLength="1" d="M170 70V130M280 70V130M390 70V130" style="--d:.85s"/>
+      <path pathLength="1" d="M170 130L280 70L390 130" style="--d:1s"/>
+      <path class="acc" pathLength="1" d="M40 192Q280 262 520 192" style="--d:1.35s"/>
+      <g class="hi-load"><path d="M280 20V62M268 50l12 14 12-14"/></g>
+    </svg>
+    <div class="hi-brand"><span style="--i:0">A</span><span style="--i:1">N</span><span style="--i:2">S</span><span style="--i:3">T</span><span style="--i:4">R</span><span style="--i:5">U</span><span style="--i:6">C</span><span style="--i:7">E</span><span style="--i:8">D</span><span style="--i:9">U</span></div>
+    <p class="hi-sub">Belajar gaya dalam struktur</p>
+    <div class="hi-bar"><i></i></div>
+  </div>
+  <div class="hi-skip">KETUK UNTUK MELEWATI</div>
+</div>
+<div id="prog" aria-hidden="true"></div>
+<header class="nav"><div class="wrap">
+  <a class="brand" href="home.html"><i>AS</i>ANSTRUCEDU</a>
+  <a class="l" href="#alur">Alur</a><a class="l" href="#modul">Modul</a><a class="l" href="#cara">Cara belajar</a><a class="l" href="#sentuh">Sentuh</a><a class="l" href="#diagram">Diagram</a>
+  <a class="l" href="index.html">Laboratorium</a>
+  <div class="pal" id="pal"></div>
+  <span class="who" id="who"></span><button class="btn sm" id="logout" type="button">Keluar</button>
+</div></header>
+
+<main>
+<section class="kelas" aria-label="Ruang kelas ANSTRUCEDU"><div class="wrap">
+  <h1>Selamat datang di kelas <span class="grad">Analisis Struktur.</span></h1>
+  <p class="typed" aria-hidden="true">Belajar <b id="typed">balok, portal, dan pelengkung</b><span class="caret"></span></p>
+  <p class="lead">Masuk, pilih mejamu, lalu mulai belajar. Ketuk papan tulis untuk melihat demo beban melintas, atau buka pintu ke laboratorium.</p>
+  <div class="stage">
+  <svg viewBox="0 0 1000 560" role="group" aria-label="Ruang kelas dengan papan tulis, tiga meja modul, rak kuis, dan pintu laboratorium" font-family="Figtree,system-ui,sans-serif">
+    <rect width="1000" height="560" fill="#efe3cb"/>
+    <rect y="400" width="1000" height="160" fill="#c9a26b"/>
+    <g stroke="#b58d57" stroke-width="2"><path d="M0 445H1000M0 492H1000M0 537H1000"/></g>
+    <rect y="392" width="1000" height="10" fill="#8a5a2b"/>
+    <defs><clipPath id="winclip"><rect x="44" y="64" width="162" height="182" rx="3"/></clipPath>
+    <linearGradient id="beamg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff7d6" stop-opacity=".8"/><stop offset="1" stop-color="#fff7d6" stop-opacity="0"/></linearGradient></defs>
+    <g class="ly-far"><rect x="40" y="60" width="170" height="190" rx="6" fill="#bfe3ee"/>
+      <g clip-path="url(#winclip)">
+        <g class="rays" style="transform-origin:170px 105px"><path d="M170 68V78M170 132V142M133 105H143M197 105H207M144 79l7 7M196 131l-7-7M196 79l-7 7M144 131l7-7" stroke="#f4b73f" stroke-width="3" stroke-linecap="round"/></g>
+        <circle class="sun" cx="170" cy="105" r="20" fill="#f4b73f"/>
+        <g transform="translate(0 112)"><path class="cloud" d="M0 0h46a10 10 0 0 0 0-14a14 14 0 0 0-26-4a12 12 0 0 0-20 6a9 9 0 0 0 0 12z" fill="#fff" opacity=".92"/></g>
+        <g transform="translate(0 200)"><path class="cloud c2" d="M0 0h38a8 8 0 0 0 0-12a12 12 0 0 0-22-3a10 10 0 0 0-16 5a8 8 0 0 0 0 10z" fill="#fff" opacity=".85"/></g>
+      </g>
+      <rect x="40" y="60" width="170" height="190" rx="6" fill="none" stroke="#8a5a2b" stroke-width="8"/><path d="M125 60V250M40 155H210" stroke="#8a5a2b" stroke-width="6"/></g>
+    <polygon class="beam ly-far" points="44,64 206,64 470,400 190,400" fill="url(#beamg)" opacity=".4" pointer-events="none"/>
+    <g class="ly-far" pointer-events="none"><circle class="mote" cx="90" cy="300" r="2.2"/><circle class="mote" cx="140" cy="340" r="1.8"/><circle class="mote" cx="200" cy="290" r="2.4"/><circle class="mote" cx="250" cy="350" r="1.6"/><circle class="mote" cx="110" cy="250" r="1.8"/><circle class="mote" cx="300" cy="320" r="2"/><circle class="mote" cx="170" cy="370" r="2.2"/><circle class="mote" cx="330" cy="370" r="1.6"/><circle class="mote" cx="75" cy="360" r="1.8"/><circle class="mote" cx="225" cy="260" r="1.6"/></g>
+    <g class="ly-far"><g transform="translate(780 80)"><circle r="30" fill="#fff" stroke="#0b3b41" stroke-width="5"/><path d="M0 -26V-23M26 0H23M0 26V23M-26 0H-23" stroke="#0b3b41" stroke-width="2" stroke-linecap="round"/><path class="hh" d="M0 0V-13" stroke="#0b3b41" stroke-width="4" stroke-linecap="round"/><path class="mh" d="M0 0V-20" stroke="#0b3b41" stroke-width="3" stroke-linecap="round"/><path class="sh" d="M0 4V-22" stroke="#dc2626" stroke-width="1.6" stroke-linecap="round"/><circle r="2.6" fill="#0b3b41"/></g></g>
+    <a class="hs ly-mid" href="#alur" aria-label="Papan tulis: lihat demo beban melintas"><g class="lift">
+      <rect x="250" y="50" width="450" height="230" rx="8" fill="#1f4d45" stroke="#8a5a2b" stroke-width="10"/>
+      <text x="475" y="108" text-anchor="middle" font-size="28" font-weight="800" fill="#f5f5ec">Gaya dalam struktur</text>
+      <g stroke="#f5f5ec" stroke-width="4" stroke-linecap="round" fill="none"><path class="ch" pathLength="1" d="M310 185H640"/><path class="ch c2" pathLength="1" d="M310 185l-13 20h26zM640 185l-13 20h26z"/></g>
+      <g class="ldw"><path class="bnc" d="M475 130V180M466 170l9 12 9-12" stroke="#f4b73f" stroke-width="4" fill="none" stroke-linecap="round"/></g>
+      <path class="ch c2" pathLength="1" d="M310 245L475 215L640 245" stroke="#7fd4da" stroke-width="3" fill="none"/>
+      <text class="blink" x="475" y="266" text-anchor="middle" font-size="14" fill="#cfe9e0">ketuk untuk melihat demo</text>
+    </g></a>
+    <a class="hs ly-mid" href="latihan.html" aria-label="Rak kuis: latihan soal"><g class="lift">
+      <rect x="725" y="290" width="85" height="110" rx="3" fill="#8a5a2b" stroke="#5b3a18" stroke-width="4"/>
+      <path d="M725 327H810M725 364H810" stroke="#5b3a18" stroke-width="4"/>
+      <rect x="735" y="302" width="12" height="25" fill="#dc2626"/><rect x="750" y="298" width="12" height="29" fill="#f4b73f"/><rect x="765" y="304" width="12" height="23" fill="#0e7c86"/>
+      <rect x="735" y="340" width="40" height="24" fill="#fff"/><rect x="740" y="376" width="50" height="24" fill="#fff"/>
+      <rect x="722" y="250" width="92" height="30" rx="15" fill="#0b3b41"/><text x="768" y="271" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">Kuis</text>
+    </g></a>
+    <a class="hs ly-mid" href="index.html" aria-label="Pintu: masuk ke laboratorium"><g class="lift">
+      <rect x="840" y="170" width="130" height="232" rx="4" fill="#a8733a" stroke="#5b3a18" stroke-width="6"/>
+      <rect x="854" y="190" width="102" height="90" rx="3" fill="#8a5a2b"/><rect x="854" y="296" width="102" height="90" rx="3" fill="#8a5a2b"/>
+      <circle cx="950" cy="300" r="7" fill="#f4b73f"/>
+      <rect x="840" y="130" width="130" height="30" rx="15" fill="#0b3b41"/><text x="905" y="151" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">Laboratorium</text>
+    </g></a>
+    <a class="hs ly-near" href="balok.html" aria-label="Meja Balok"><g class="lift">
+      <rect x="50" y="360" width="170" height="22" rx="4" fill="#8a5a2b"/><path d="M68 382V470M202 382V470" stroke="#5b3a18" stroke-width="10"/>
+      <g transform="translate(75 330)"><g class="bob b1"><rect width="120" height="30" rx="3" fill="#fff" stroke="#0b3b41" stroke-width="3"/><path d="M12 16H108" stroke="#0e7c86" stroke-width="5"/><path d="M12 16l-6 10h12zM108 16l-6 10h12z" fill="#0b3b41"/></g></g>
+      <rect x="75.0" y="486" width="120" height="30" rx="15" fill="#0b3b41"/><text x="135" y="507" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">Meja Balok</text>
+    </g></a>
+    <a class="hs ly-near" href="pelengkung.html" aria-label="Meja Pelengkung"><g class="lift">
+      <rect x="270" y="360" width="170" height="22" rx="4" fill="#8a5a2b"/><path d="M288 382V470M422 382V470" stroke="#5b3a18" stroke-width="10"/>
+      <g transform="translate(295 330)"><g class="bob b2"><rect width="120" height="30" rx="3" fill="#fff" stroke="#0b3b41" stroke-width="3"/><path d="M12 26Q60-14 108 26" stroke="#dc2626" stroke-width="5" fill="none"/></g></g>
+      <rect x="275.0" y="486" width="160" height="30" rx="15" fill="#0b3b41"/><text x="355" y="507" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">Meja Pelengkung</text>
+    </g></a>
+    <a class="hs ly-near" href="portal.html" aria-label="Meja Portal"><g class="lift">
+      <rect x="490" y="360" width="170" height="22" rx="4" fill="#8a5a2b"/><path d="M508 382V470M642 382V470" stroke="#5b3a18" stroke-width="10"/>
+      <g transform="translate(515 330)"><g class="bob b3"><rect width="120" height="30" rx="3" fill="#fff" stroke="#0b3b41" stroke-width="3"/><path d="M20 26V8H100V26" stroke="#16834a" stroke-width="5" fill="none"/></g></g>
+      <rect x="515.0" y="486" width="120" height="30" rx="15" fill="#0b3b41"/><text x="575" y="507" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">Meja Portal</text>
+    </g></a>
+<g class="ly-top" pointer-events="none"><g class="plane"><path d="M0 0L36 -9L13 4L9 15L5 4Z" fill="#fff" stroke="#8a5a2b" stroke-width="1.6" stroke-linejoin="round"/><path d="M13 4L36 -9" stroke="#c9a26b" stroke-width="1.2"/></g>
+      <g class="toy"><g transform="translate(0 522) scale(1.1)"><g class="toyb"><rect x="0" y="2" width="32" height="14" rx="3" fill="#f4b73f"/><rect x="32" y="7" width="13" height="9" rx="2" fill="#e0952b"/><rect x="36" y="9" width="6" height="4" rx="1" fill="#bfe3ee"/>
+        <g class="wh" style="transform-origin:9px 18px"><circle cx="9" cy="18" r="4.6" fill="#2b1b0b" stroke="#fff" stroke-width="1.4"/><path d="M9 14.5V21.5" stroke="#fff" stroke-width="1.3"/></g>
+        <g class="wh" style="transform-origin:37px 18px"><circle cx="37" cy="18" r="4.6" fill="#2b1b0b" stroke="#fff" stroke-width="1.4"/><path d="M37 14.5V21.5" stroke="#fff" stroke-width="1.3"/></g></g></g></g></g>
+  </svg>
+  <div class="pintu" aria-hidden="true"><i></i><i></i></div>
+  </div>
+  <p class="hint">Bisa juga dengan Tab lalu Enter untuk memilih meja.</p>
+  <div class="cta" style="justify-content:center;margin-top:16px"><a class="btn" href="balok.html">Mulai dari balok</a><a class="btn ghost" href="#cara">Lihat urutan belajar</a></div>
+</div></section>
+
+
+
+<section id="alur" aria-label="Satu beban melintas jembatan"><div class="stick"><div class="wrap st">
+  <div><h2>Ikuti satu beban melintas</h2><p id="cap2" role="status"></p><div class="readout" id="ro2"></div>
+   <div class="jump" id="jump"></div><p class="tip2">Scroll untuk menggerakkan beban. Ketuk langkah atau ketuk jembatan untuk melompat ke posisi itu.</p></div>
+  <div class="drafting"><svg id="sv2" viewBox="0 0 600 330" role="img" aria-label="Beban bergerak melintasi balok dengan diagram SFD dan BMD">
+   <line x1="40" y1="80" x2="560" y2="80" stroke="var(--ink)" stroke-width="4"/>
+   <path d="M40 84 l-14 24 h28z M560 84 l-14 24 h28z" fill="var(--sheet)" stroke="var(--ink)" stroke-width="3"/>
+   <g id="l2"><line x1="0" y1="20" x2="0" y2="72" stroke="var(--signal)" stroke-width="6"/><path d="M-9 58 L9 58 L0 76 Z" fill="var(--signal)" stroke="#b88f00" stroke-width="1.5"/></g>
+   <text x="40" y="140" font-size="13" font-weight="700" fill="var(--v)">SFD</text><line x1="40" y1="190" x2="560" y2="190" stroke="var(--line)" stroke-width="2"/>
+   <path id="sfd2" fill="color-mix(in srgb,var(--v) 22%,transparent)" stroke="var(--v)" stroke-width="3" stroke-linejoin="round"/>
+   <text x="40" y="236" font-size="13" font-weight="700" fill="var(--m)">BMD</text><line x1="40" y1="248" x2="560" y2="248" stroke="var(--line)" stroke-width="2"/>
+   <path id="bmd2" fill="color-mix(in srgb,var(--m) 20%,transparent)" stroke="var(--m)" stroke-width="3" stroke-linejoin="round"/>
+  </svg></div>
+</div></div></section>
+
+<section class="s wrap" id="modul">
+  <h2>Tiga struktur, satu cara membacanya</h2>
+  <p class="sec-sub">Setiap modul punya simulasi sendiri. Mulai dari balok, karena dua modul lainnya memakai langkah yang sama.</p>
+  <p class="swipe">Geser ke samping untuk melihat modul lain</p>
+  <div class="rail">
+  <a class="mod" href="index.html#balok">
+    <svg viewBox="0 0 160 80" aria-hidden="true"><line x1="14" y1="30" x2="146" y2="30"/><path d="M14 34 l-8 14 h16z M146 34 l-8 14 h16z"/><path d="M60 6 v20 m-5 -6 l5 6 l5 -6"/></svg>
+    <div><h3>Balok penopang</h3><p>Jembatan dengan kendaraan bergerak. Atur beban, bentang, dan kapasitas, lalu lihat kapan jembatan runtuh.</p></div></a>
+  <a class="mod" href="index.html#portal">
+    <svg viewBox="0 0 160 80" aria-hidden="true"><path d="M34 70 V20 H126 V70"/><path d="M2 36 h24 m-6 -5 l6 5 l-6 5"/></svg>
+    <div><h3>Portal</h3><p>Dua kolom dan satu balok atas. Gaya horizontal ikut bekerja, jadi gaya normal mulai berperan.</p></div></a>
+  <a class="mod" href="index.html#arch">
+    <svg viewBox="0 0 160 80" aria-hidden="true"><path d="M24 70 Q80 -20 136 70"/><circle cx="80" cy="25" r="5"/></svg>
+    <div><h3>Pelengkung tiga sendi</h3><p>Beban disalurkan sebagai gaya tekan lewat busur. Sendi di puncak membuat momennya nol.</p></div></a>
+</div>
+</section>
+
+<section class="s wrap" id="cara">
+  <h2>Urutan menganalisis yang dipakai di semua modul</h2>
+  <p class="sec-sub">Sama seperti di catatan kuliah. Langkah hitung ditampilkan langsung di tiap simulasi.</p>
+  <ol class="flow">
+    <li><b>Reaksi tumpuan</b><span>Hitung gaya di tumpuan dengan ΣM = 0 dan ΣV = 0.</span></li>
+    <li><b>Gaya lintang (SFD)</b><span>Gaya geser di tiap titik; berubah tanda di titik momen maksimum.</span></li>
+    <li><b>Momen lentur (BMD)</b><span>Seberapa besar struktur ingin melengkung dan di mana paling kritis.</span></li>
+    <li><b>Gaya normal (NFD)</b><span>Gaya tarik atau tekan sepanjang batang, misalnya saat kendaraan mengerem.</span></li>
+  </ol>
+</section>
+
+
+<section class="s wrap" id="sentuh">
+  <h2>Sentuh strukturnya</h2>
+  <p class="sec-sub">Pilih satu struktur, lalu ketuk titik kuning untuk tahu perannya.</p>
+  <div class="tb" id="st-tabs"><button type="button" aria-selected="true" data-s="ss">Balok</button><button type="button" aria-selected="false" data-s="pt">Portal</button><button type="button" aria-selected="false" data-s="ar">Pelengkung</button></div>
+  <div class="explore"><svg id="st-svg" viewBox="0 0 400 230" role="group" aria-label="Struktur yang bisa disentuh"></svg><div class="infob" id="st-info" role="status" aria-live="polite"></div></div>
+</section>
+
+
+<section class="s wrap" id="pratinjau">
+  <div class="demo2">
+    <div><h2>Coba demokan seperti ini</h2>
+    <p class="sec-sub" style="margin-bottom:0">Ini pratinjau yang bisa diketuk. Pindah struktur lewat tab di bawah, lalu nyalakan atau matikan diagram untuk melihat bentuk SFD, BMD, dan NFD pada tiap struktur.</p>
+    <ul><li>Ketuk tab Balok, Portal, atau Pelengkung.</li><li>Ketuk SFD, BMD, NFD untuk menampilkan diagramnya.</li><li>Bentuk diagram di sini ilustrasi untuk satu beban terpusat atau beban merata. Hitungan lengkap ada di laboratorium.</li></ul>
+    <p style="margin-top:20px"><a class="btn" href="index.html">Buka laboratorium lengkap</a></p></div>
+    <div class="phone" aria-label="Pratinjau aplikasi"><div class="scr" id="scr"></div></div>
+  </div>
+</section>
+
+<section class="s wrap" id="diagram">
+  <h2>Kenali tiga diagram dengan perumpamaan</h2>
+  <p class="sec-sub">Pilih satu diagram. Setiap penjelasan ditutup dengan rumus yang dipakai di aplikasi.</p>
+  <div class="tb" role="tablist" aria-label="Jenis diagram">
+    <button role="tab" aria-selected="true" data-t="0">SFD</button><button role="tab" aria-selected="false" data-t="1">BMD</button><button role="tab" aria-selected="false" data-t="2">NFD</button>
+  </div>
+  <div class="pnl" role="tabpanel"><div><h3 style="color:var(--v)">SFD: seberapa kuat balok “digunting”</h3><p>Bayangkan gunting memotong balok di satu titik. SFD menunjukkan besar gaya yang menggeser kedua sisi potongan ke arah berlawanan. Grafiknya melompat tepat di tempat beban terpusat berada.</p><div class="fm">V(x) = R<sub>A</sub> − ΣP di kiri x</div></div>
+    <svg viewBox="0 0 300 130" aria-hidden="true"><line x1="10" y1="65" x2="290" y2="65" stroke="var(--line)" stroke-width="2"/><path d="M10 65 V25 H160 V105 H290 V65" fill="color-mix(in srgb,var(--v) 22%,transparent)" stroke="var(--v)" stroke-width="3" stroke-linejoin="round"/></svg></div>
+  <div class="pnl" role="tabpanel" hidden><div><h3 style="color:var(--m)">BMD: seberapa besar balok ingin melengkung</h3><p>Tekuk penggaris dengan dua tangan. Makin tinggi grafik, makin keras serat di sisi tarik berusaha merenggang, sehingga penampang harus makin kuat. Puncaknya ada di titik saat SFD memotong nol.</p><div class="fm">M(x) = R<sub>A</sub>·x − ΣP·(x − x<sub>i</sub>)</div></div>
+    <svg viewBox="0 0 300 130" aria-hidden="true"><line x1="10" y1="20" x2="290" y2="20" stroke="var(--line)" stroke-width="2"/><path d="M10 20 L160 110 L290 20 Z" fill="color-mix(in srgb,var(--m) 20%,transparent)" stroke="var(--m)" stroke-width="3" stroke-linejoin="round"/></svg></div>
+  <div class="pnl" role="tabpanel" hidden><div><h3 style="color:var(--n)">NFD: tarik atau tekan sepanjang batang</h3><p>Seperti menarik tali atau menekan tongkat dari ujungnya. Pada jembatan, gaya ini muncul saat kendaraan mengerem dan menyalurkan gaya horizontal ke tumpuan sendi.</p><div class="fm">N(x) = μ·ΣP di kanan x</div></div>
+    <svg viewBox="0 0 300 130" aria-hidden="true"><line x1="10" y1="65" x2="290" y2="65" stroke="var(--line)" stroke-width="2"/><path d="M10 65 V35 H290 V65" fill="color-mix(in srgb,var(--n) 22%,transparent)" stroke="var(--n)" stroke-width="3" stroke-linejoin="round"/></svg></div>
+</section>
+
+<section class="s wrap" id="contoh">
+  <h2>Contoh soal dari angkatan 2024</h2>
+  <p class="sec-sub">Angka di bawah dihitung dengan rumus yang sama dengan simulator, jadi Anda bisa mencocokkannya.</p>
+  <div class="exs" id="exs"></div>
+</section>
+
+
+
+<section class="s wrap" id="faq">
+  <h2>Pertanyaan yang sering muncul</h2>
+  <p class="sec-sub"></p>
+  <details class="q"><summary>Apakah hasilnya boleh dipakai untuk merencanakan jembatan?</summary><p>Tidak. Aplikasi ini untuk belajar. Berat sendiri, deformasi, tekuk, dan faktor beban tidak dimodelkan.</p></details>
+  <details class="q"><summary>Kenapa momen kantilever bernilai negatif?</summary><p>Serat atas tertarik di jepitan, dan konvensi di aplikasi menggambar momen positif di sisi bawah. Tanda negatif hanya menunjukkan sisi tarik, bukan kekuatan yang lebih kecil.</p></details>
+  <details class="q"><summary>Satuan apa yang dipakai?</summary><p>kN untuk gaya dan meter untuk panjang. Jika catatan Anda memakai ton, kalikan 9,80665 untuk mendapat kN.</p></details>
+  <details class="q"><summary>Mengapa saya diminta masuk?</summary><p>Masuk hanya pengaman tampilan di browser agar halaman terarah, bukan sistem keamanan sungguhan.</p></details>
+</section>
+
+<a class="btn fab" href="index.html">Masuk ke lab</a>
+<div class="end"><div class="wrap">
+  <h2>Siap mencoba beban pertamamu?</h2>
+  <a class="btn" href="index.html">Masuk ke laboratorium</a>
+</div></div>
+</main>
+<footer><div class="wrap"><span>ANSTRUCEDU · Analisa Struktur Education Tools</span><span>Untuk pembelajaran, bukan dasar tunggal perencanaan struktur. Satuan kN dan m.</span></div></footer>
+
+<script>
+(function(){
+  var $=function(i){return document.getElementById(i)},f=function(n,d){return n.toFixed(d==null?1:d).replace('.',',')};
+  var L=10,P=100,X0=40,W=520,k=W/L,mode='ss';
+  // penjelajah struktur
+  var base={
+   ss:'<line x1="60" y1="110" x2="340" y2="110" stroke="var(--ink)" stroke-width="8" stroke-linecap="round"/><path d="M60 118 l-16 28 h32z M340 118 l-16 28 h32z" fill="var(--sheet)" stroke="var(--ink)" stroke-width="3"/><circle cx="328" cy="152" r="5" fill="var(--ink)"/><circle cx="352" cy="152" r="5" fill="var(--ink)"/><path d="M170 40 v56 m-9 -10 l9 12 l9 -12" stroke="var(--signal)" stroke-width="6" fill="none" stroke-linecap="round"/>',
+   pt:'<path d="M100 180 V60 H300 V180" fill="none" stroke="var(--ink)" stroke-width="8" stroke-linejoin="round"/><path d="M100 188 l-16 26 h32z M300 188 l-16 26 h32z" fill="var(--sheet)" stroke="var(--ink)" stroke-width="3"/><path d="M40 120 h40 m-10 -9 l11 9 l-11 9" stroke="var(--signal)" stroke-width="6" fill="none" stroke-linecap="round"/>',
+   ar:'<path d="M60 190 Q200 -20 340 190" fill="none" stroke="var(--ink)" stroke-width="8" stroke-linecap="round"/><path d="M60 196 l-16 26 h32z M340 196 l-16 26 h32z" fill="var(--sheet)" stroke="var(--ink)" stroke-width="3"/>'};
+  var hot={
+   ss:[[60,110,'Tumpuan A: sendi','Menahan gaya vertikal dan horizontal (2 reaksi). Balok tidak bisa bergeser di sini, tapi masih boleh berputar.'],[340,110,'Tumpuan B: rol','Hanya menahan gaya vertikal (1 reaksi). Memberi ruang agar balok bisa memuai tanpa menimbulkan gaya tambahan.'],[170,40,'Beban P','Makin dekat ke tengah bentang, makin besar momen maksimum. Di tengah: M = P·L/4.'],[250,110,'Batang balok','Di sini gaya geser dan momen lentur bekerja. Momen maksimum ada di titik saat V berubah tanda.']],
+   pt:[[100,188,'Tumpuan A: sendi','Menahan reaksi vertikal dan horizontal. Gaya horizontal F dari samping ditahan di sini.'],[300,188,'Tumpuan B: rol','Hanya menahan gaya vertikal, jadi portal tetap statis tertentu.'],[100,60,'Sambungan kaku','Sudut kolom dan balok tidak berubah saat melentur, sehingga momen berpindah utuh dari kolom ke balok.'],[50,120,'Gaya horizontal F','Membuat kolom kiri melentur dan menimbulkan gaya normal pada kolom lain.']],
+   ar:[[60,190,'Tumpuan A: sendi','Menahan reaksi vertikal dan gaya horizontal H. Gaya H inilah yang membuat busur tetap mengunci.'],[340,190,'Tumpuan B: sendi','Menahan reaksi vertikal dan horizontal yang sama besar dengan A.'],[200,80,'Sendi C di puncak','Momen di titik ini nol. Syarat M<sub>C</sub> = 0 dipakai untuk menghitung H.'],[110,125,'Busur','Beban disalurkan sebagai gaya tekan sepanjang busur, bukan sebagai lentur besar.']]};
+  var cur='ss',sel=null;
+  function drawS(){
+    var g=base[cur];hot[cur].forEach(function(p,i){g+='<g class="hot" tabindex="0" role="button" aria-label="'+p[2]+'" data-i="'+i+'"><circle class="halo" cx="'+p[0]+'" cy="'+p[1]+'" r="14"/><circle class="ring" cx="'+p[0]+'" cy="'+p[1]+'" r="9"/><circle cx="'+p[0]+'" cy="'+p[1]+'" r="26" fill="transparent"/></g>'});
+    $('st-svg').innerHTML=g;$('st-info').innerHTML='<h3>Ketuk sebuah titik</h3><p>Setiap titik kuning menjelaskan satu bagian struktur.</p>';
+    $('st-svg').querySelectorAll('.hot').forEach(function(n){
+      var pick=function(){var p=hot[cur][+n.dataset.i];$('st-svg').querySelectorAll('.hot').forEach(function(m){m.classList.toggle('on',m===n)});$('st-info').innerHTML='<h3>'+p[2]+'</h3><p>'+p[3]+'</p>';if(navigator.vibrate)navigator.vibrate(8)};
+      n.addEventListener('click',pick);n.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();pick()}})});
+  }
+  var st=document.querySelectorAll('#st-tabs button');
+  st.forEach(function(b){b.onclick=function(){cur=b.dataset.s;st.forEach(function(x){x.setAttribute('aria-selected',x===b)});drawS()}});
+  drawS();
+
+
+  // pratinjau aplikasi
+  var PV={
+   ss:{t:'Balok penopang',s:'Beban P di tengah bentang',base:'<line x1="30" y1="50" x2="270" y2="50" stroke="var(--ink)" stroke-width="6" stroke-linecap="round"/><path d="M30 55 l-10 18 h20z M270 55 l-10 18 h20z" fill="var(--sheet)" stroke="var(--ink)" stroke-width="2.5"/><path class="pbnc" d="M150 12 v32" stroke="var(--signal)" stroke-width="5"/>',
+    V:['M30 108 V86 H150 V130 H270 V108','Geser berubah tanda tepat di bawah beban.'],M:['M30 140 L150 190 L270 140 Z','Momen terbesar di bawah beban: M = P·L/4.'],N:[null,'N = 0, kecuali ada gaya rem kendaraan.']},
+   pt:{t:'Portal',s:'Beban merata q dan gaya F',base:'<path d="M70 130 V50 H230 V130" fill="none" stroke="var(--ink)" stroke-width="6" stroke-linejoin="round"/><path d="M70 136 l-10 18 h20z M230 136 l-10 18 h20z" fill="var(--sheet)" stroke="var(--ink)" stroke-width="2.5"/>',
+    V:['M70 50 V26 L150 50 L230 74 V50 Z','Geser pada balok atas berubah linear akibat q.'],M:['M70 50 Q150 0 230 50 Z M70 50 H48 L70 98 Z M230 50 H252 L230 98 Z','Momen berpindah utuh lewat sambungan kaku.'],N:['M70 130 V50 H54 V130 Z M230 130 V50 H246 V130 Z','Kolom menerima gaya tekan akibat reaksi tumpuan.']},
+   ar:{t:'Pelengkung tiga sendi',s:'Beban merata penuh',base:'<path d="M40 150 Q150 -20 260 150" fill="none" stroke="var(--ink)" stroke-width="6" stroke-linecap="round"/><path d="M40 156 l-10 18 h20z M260 156 l-10 18 h20z" fill="var(--sheet)" stroke="var(--ink)" stroke-width="2.5"/><circle cx="150" cy="65" r="5" fill="var(--sheet)" stroke="var(--ink)" stroke-width="2.5"/>',
+    V:[null,'Geser kecil dan mendekati nol pada beban merata penuh.'],M:[null,'Pada parabola dengan q penuh, momen ≈ 0. Sendi C selalu M = 0.'],N:['M40 150 Q150 -20 260 150 L248 150 Q150 4 52 150 Z','Beban disalurkan sebagai gaya tekan sepanjang busur.']}};
+  var pk='ss',on={V:true,M:true,N:false},CL={V:'var(--v)',M:'var(--m)',N:'var(--n)'};
+  var fresh=true,lastOn=null;
+  function drawP(){
+    var d=PV[pk],g=d.base,note='';
+    ['V','M','N'].forEach(function(k){if(on[k]&&d[k][0])g+='<path'+((fresh||k===lastOn)?' class="dg" pathLength="1"':'')+' d="'+d[k][0]+'" fill="'+CL[k]+'" fill-opacity=".25" stroke="'+CL[k]+'" stroke-width="2.5" stroke-linejoin="round"/>';if(on[k])note+=k.replace('V','SFD').replace('M','BMD').replace('N','NFD')+': '+d[k][1]+' '});
+    $('scr').className='scr'+(fresh?' fresh':'');$('scr').innerHTML='<h3>'+d.t+'</h3><small>'+d.s+'</small><div class="card2"><svg viewBox="0 0 300 200" role="img" aria-label="'+d.t+' dengan diagram">'+g+'</svg></div><div class="chips">'+['V','M','N'].map(function(k){return '<button type="button" data-k="'+k+'" aria-pressed="'+on[k]+'">'+{V:'SFD',M:'BMD',N:'NFD'}[k]+'</button>'}).join('')+'</div><p class="pnote" role="status">'+(note||'Nyalakan salah satu diagram.')+'</p><div class="bar" role="tablist">'+[['ss','Balok'],['pt','Portal'],['ar','Pelengkung']].map(function(x){return '<button type="button" role="tab" data-p="'+x[0]+'" aria-selected="'+(pk===x[0])+'">'+x[1]+'</button>'}).join('')+'</div>';
+    $('scr').querySelectorAll('.chips button').forEach(function(b){b.onclick=function(){on[b.dataset.k]=!on[b.dataset.k];lastOn=on[b.dataset.k]?b.dataset.k:null;fresh=false;if(navigator.vibrate)navigator.vibrate(8);drawP()}});
+    $('scr').querySelectorAll('.bar button').forEach(function(b){b.onclick=function(){pk=b.dataset.p;fresh=true;lastOn=null;if(navigator.vibrate)navigator.vibrate(8);drawP()}});
+  }
+  drawP();
+
+
+  // scrollytelling: beban mengikuti scroll, bisa diketuk
+  var sec=$('alur'),STEPS=[['Masuk',.03],['Bergeser',.3],['Tengah',.5],['Keluar',.97]],cap='';
+  $('jump').innerHTML=STEPS.map(function(s,i){return '<button type="button" data-i="'+i+'">'+(i+1)+'. '+s[0]+'</button>'}).join('');
+  function goP(pp){var tot=sec.offsetHeight-innerHeight,top=sec.getBoundingClientRect().top+scrollY;scrollTo({top:top+pp*tot,behavior:'smooth'})}
+  $('jump').querySelectorAll('button').forEach(function(b){b.onclick=function(){if(navigator.vibrate)navigator.vibrate(8);goP(STEPS[+b.dataset.i][1])}});
+  $('sv2').addEventListener('click',function(e){var r=this.getBoundingClientRect(),x=(e.clientX-r.left)/r.width*600,a=Math.max(.5,Math.min(9.5,(x-40)/52));if(navigator.vibrate)navigator.vibrate(8);goP((a-.5)/9)});
+  function story(){
+    var r=sec.getBoundingClientRect(),tot=sec.offsetHeight-innerHeight,pp=Math.max(0,Math.min(1,-r.top/tot)),a=.5+pp*9,b=L-a,px=X0+a*k,RA=P*b/L,RB=P*a/L,M=P*a*b/L,by=190,sf=function(v){return by-v*40/P};
+    $('l2').setAttribute('transform','translate('+px+',0)');
+    $('sfd2').setAttribute('d','M'+X0+','+by+' L'+X0+','+sf(RA)+' L'+px+','+sf(RA)+' L'+px+','+sf(RA-P)+' L'+(X0+W)+','+sf(RA-P)+' L'+(X0+W)+','+by+' Z');
+    $('bmd2').setAttribute('d','M'+X0+',248 L'+px+','+(248+M*70/250)+' L'+(X0+W)+',248 Z');
+    var t=pp<.2?'Beban baru masuk dari tumpuan A. Hampir seluruh beratnya ditahan A, sedangkan B nyaris tidak menahan apa-apa.':pp<.45?'Beban bergeser ke tengah. Reaksi A turun, reaksi B naik, dan momen terus membesar.':pp<.55?'Tepat di tengah bentang. Reaksi A dan B sama besar, dan momen mencapai puncak: M = P·L/4 = 250 kN·m.':'Beban mendekati B. Kini B yang menahan hampir seluruh beban, dan momen mengecil lagi.';
+    if(t!==cap){cap=t;$('cap2').textContent=t}
+    $('ro2').innerHTML='<span>Posisi <b>'+f(a)+' m</b></span><span>R<sub>A</sub> <b>'+f(RA)+' kN</b></span><span>R<sub>B</sub> <b>'+f(RB)+' kN</b></span><span>M <b style="color:var(--m)">'+f(M)+' kN·m</b></span>';
+    var near=0,best=9;STEPS.forEach(function(s,i){var d=Math.abs(s[1]-pp);if(d<best){best=d;near=i}});
+    $('jump').querySelectorAll('button').forEach(function(x,i){x.setAttribute('aria-pressed',i===near)});
+  }
+  var tick=false;
+  function onScroll(){if(tick)return;tick=true;requestAnimationFrame(function(){tick=false;
+    var m=document.documentElement.scrollHeight-innerHeight;$('prog').style.transform='scaleX('+(m>0?scrollY/m:0)+')';
+    document.documentElement.style.setProperty('--sy',(scrollY*.18)+'px');story()})}
+  addEventListener('scroll',onScroll,{passive:true});addEventListener('resize',onScroll);onScroll();
+  // muncul saat di-scroll
+  if('IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.15});
+    document.querySelectorAll('#modul h2,#modul .sec-sub,.mod,.explore,.phone,.demo2>div:first-child,.ex,.quiz,.flow li,details.q,#sentuh h2,#cara h2,#uji h2,#faq h2,#contoh h2,#diagram h2').forEach(function(n,i){n.classList.add('rv');if(n.matches('.flow li,.mod,.ex,details.q'))n.style.setProperty('--d',(Array.prototype.indexOf.call(n.parentNode.children,n)%4)*.08+'s');io.observe(n)});
+  }
+
+  // tab diagram
+  var tabs=document.querySelectorAll('#diagram .tb button'),pn=document.querySelectorAll('#diagram .pnl');
+  tabs.forEach(function(t){t.onclick=function(){tabs.forEach(function(x,i){var on=x===t;x.setAttribute('aria-selected',on);pn[i].hidden=!on})}});
+
+  // contoh soal
+  var e1={P:45,a:3,L:7},ra=e1.P*(e1.L-e1.a)/e1.L,rb=e1.P*e1.a/e1.L;
+  var e2=475*2.25+390*4.75;
+  function dl(r){return '<dl>'+r.map(function(x){return '<dt>'+x[0]+'</dt><dd>'+x[1]+'</dd>'}).join('')+'</dl>'}
+  $('exs').innerHTML=
+    '<div class="ex"><h3>Balok sederhana</h3><small>P = 45 kN di 3 m dari A, bentang 7 m</small>'+dl([['R<sub>A</sub>',f(ra,3)+' kN'],['R<sub>B</sub>',f(rb,3)+' kN'],['Kontrol ΣV',f(ra+rb,3)+' kN'],['M maks (di bawah beban)',f(ra*e1.a,3)+' kN·m']])+'<a href="index.html#balok">Cocokkan di simulator</a></div>'+
+    '<div class="ex"><h3>Kantilever</h3><small>F₁ = 475 kN di 2,25 m dan F₂ = 390 kN di 4,75 m</small>'+dl([['R<sub>A</sub>',f(865,3)+' kN'],['M<sub>A</sub>','−'+f(e2,2)+' kN·m'],['Sisi tarik','serat atas'],['V maks',f(865,3)+' kN']])+'<a href="index.html#balok">Cocokkan di simulator</a></div>';
+
+})();
+</script>
+<script>
+/* proteksi halaman, nama pengguna, dan tombol Keluar */
+(function(){
+  var A=window.AnstruAuth;if(!A)return;
+  var out=document.getElementById('logout'),who=document.getElementById('who');
+  if(out)out.addEventListener('click',function(){
+    out.disabled=true;out.textContent='Keluar...';
+    document.body.style.transition='opacity .35s ease';document.body.style.opacity='0';
+    setTimeout(function(){A.logout()},300);
+  });
+  A.require().then(function(s){if(who)who.textContent=s.name||''});
+})();
+</script>
+<script src="home-anim.js"></script>
+</body>
+</html>

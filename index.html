@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Laboratorium ANSTRUCEDU</title>
+<link rel="stylesheet" href="lab.css">
+<link rel="stylesheet" href="lab-anim.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="auth.js"></script>
+<link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#0f766e"><link rel="apple-touch-icon" href="icon-192.png"><script src="install.js" defer></script>
+</head>
+<body>
+<div class="shell">
+<aside class="side">
+  <a class="brand" href="home.html">ANSTRUCEDU</a>
+  <p class="hello"><span id="who"></span></p>
+  <nav aria-label="Pilih kajian">
+    <button data-mode="balok" aria-pressed="true"><b>Balok penopang</b><span>Truk melintas, ada 3D dan simulasi runtuh. Mulai di sini.</span></button>
+    <button data-mode="portal" aria-pressed="false"><b>Portal</b><span>Dua kolom, balok atas, gaya horizontal F.</span></button>
+    <button data-mode="arch" aria-pressed="false"><b>Pelengkung tiga sendi</b><span>Gaya tekan lewat busur, M di puncak = 0.</span></button>
+    <button data-mode="latihan" aria-pressed="false"><b>Kuis</b><span>10 soal campuran: konsep dan hitungan bergambar. Soal selalu acak.</span></button>
+  </nav>
+  <div class="tip"><b>Tahukah kamu?</b><p id="tip"></p></div>
+  <details class="gloss"><summary>Kamus singkat</summary>
+    <dl><dt>SFD</dt><dd>Diagram gaya geser: seberapa kuat struktur “digunting”.</dd>
+    <dt>BMD</dt><dd>Diagram momen lentur: seberapa besar struktur ingin melengkung.</dd>
+    <dt>NFD</dt><dd>Diagram gaya normal: tarik atau tekan sepanjang batang.</dd>
+    <dt>Reaksi</dt><dd>Gaya yang diberikan tumpuan untuk menahan beban.</dd>
+    <dt>Sendi / rol / jepit</dt><dd>Menahan 2 / 1 / 3 reaksi (V, H, M).</dd></dl></details>
+  <details class="gloss"><summary>Konvensi tanda</summary><p>Geser positif digambar di atas sumbu, momen positif di sisi tarik, N positif = tarik. Satuan kN dan m (1 ton-gaya = 9,80665 kN).</p></details>
+  <div class="foot"><a href="home.html">Kembali ke beranda</a><button id="logout" type="button">Keluar</button></div>
+</aside>
+<main>
+  <section id="balok"><iframe src="balok.html" title="Simulator balok" sandbox="allow-scripts allow-same-origin allow-downloads"></iframe><p class="n">Video demo di halaman balok butuh koneksi internet.</p></section>
+  <section id="portal" hidden><iframe src="portal.html" title="Simulator portal" sandbox="allow-scripts allow-same-origin allow-downloads"></iframe></section>
+  <section id="latihan" hidden><iframe src="latihan.html" title="Kuis" sandbox="allow-scripts allow-same-origin allow-downloads"></iframe></section>
+  <section id="arch" hidden><iframe src="pelengkung.html" title="Simulator pelengkung tiga sendi" sandbox="allow-scripts allow-same-origin allow-downloads"></iframe></section>
+</main>
+</div>
+<script>
+const ids=["balok","portal","arch","latihan"],bt=[...document.querySelectorAll("nav [data-mode]")];
+function go(m){if(!ids.includes(m))m="balok";ids.forEach(i=>document.getElementById(i).hidden=i!==m);bt.forEach(b=>b.setAttribute("aria-pressed",b.dataset.mode===m));scrollTo(0,0)}
+bt.forEach(b=>b.onclick=()=>{go(b.dataset.mode);history.replaceState(null,"","#"+b.dataset.mode)});
+go(location.hash.slice(1));
+addEventListener("message",e=>{if(!e.data||!e.data.anstru)return;for(const f of document.querySelectorAll("iframe"))if(f.contentWindow===e.source){if(e.data.h>200)f.style.height=(e.data.h+6)+"px"}});
+const tips=["Momen maksimum pada balok sederhana terjadi di titik saat gaya geser V = 0.","Pada kantilever, momen terbesar ada di jepitan, bukan di ujung bebas.","Pelengkung parabola dengan beban merata penuh tidak mengalami momen lentur, hanya gaya tekan.","Gaya rem kendaraan menimbulkan gaya normal pada balok jembatan.","Jumlah gaya vertikal harus sama dengan reaksi tumpuan: ΣV = 0. Pakai ini untuk mengecek hitunganmu."];
+let ti=Math.floor(Math.random()*tips.length);const tp=document.getElementById("tip");tp.textContent=tips[ti];
+setInterval(()=>{ti=(ti+1)%tips.length;tp.textContent=tips[ti]},12000);
+</script>
+<script>
+/* proteksi halaman + tombol Keluar */
+(function(){
+  var A=window.AnstruAuth;if(!A)return;
+  var out=document.getElementById('logout');
+  if(out)out.addEventListener('click',function(){
+    out.disabled=true;out.textContent='Keluar...';
+    document.body.style.transition='opacity .35s ease';document.body.style.opacity='0';
+    setTimeout(function(){A.logout()},300);
+  });
+  A.require();
+})();
+</script>
+<script src="lab-anim.js"></script>
+</body>
+</html>

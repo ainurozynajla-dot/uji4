@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ANSTRUCEDU By Najla Sharfina</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Bricolage+Grotesque:wght@500;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="login.css">
+<link rel="stylesheet" href="intro.css">
+<link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#0f766e"><link rel="apple-touch-icon" href="icon-192.png"><script src="install.js" defer></script>
+</head>
+<body class="intro-on">
+<div id="intro" aria-hidden="true"></div>
+
+<div class="page">
+  <section class="info">
+    <p class="logo">ANSTRUCEDU <span>BY NAJLA SHARFINA</span></p>
+    <h1>Pahami gaya di dalam struktur, dari balok sampai pelengkung.</h1>
+
+    <svg id="cast" viewBox="0 0 400 345" aria-hidden="true">
+      <!-- ungu -->
+      <g class="drop" style="--dl:.05s"><g class="lean" id="c-purple">
+        <rect x="95" y="25" width="115" height="315" rx="3" fill="#6c2cff"/>
+        <g class="eye"><circle class="ew" cx="132" cy="75" r="9" fill="#fff"/><circle class="ep" cx="132" cy="75" r="4.2" fill="#111"/></g>
+        <g class="eye"><circle class="ew" cx="172" cy="75" r="9" fill="#fff"/><circle class="ep" cx="172" cy="75" r="4.2" fill="#111"/></g>
+        <path id="m-purple" fill="none" stroke="#111" stroke-width="3" stroke-linecap="round" d="M142 104h20"/>
+      </g></g>
+      <!-- hitam -->
+      <g class="drop" style="--dl:.2s"><g class="lean" id="c-black">
+        <rect x="205" y="135" width="85" height="205" rx="3" fill="#1c1c1e"/>
+        <g class="eye"><circle class="ew" cx="228" cy="165" r="9" fill="#fff"/><circle class="ep" cx="228" cy="165" r="4.2" fill="#111"/></g>
+        <g class="eye"><circle class="ew" cx="266" cy="165" r="9" fill="#fff"/><circle class="ep" cx="266" cy="165" r="4.2" fill="#111"/></g>
+        <path id="m-black" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" d="M236 192h22"/>
+      </g></g>
+      <!-- oranye -->
+      <g class="drop" style="--dl:.35s"><g class="lean" id="c-orange">
+        <path d="M15 340a105 105 0 0 1 210 0Z" fill="#ff7a1a"/>
+        <g class="eye"><circle class="ew" cx="100" cy="285" r="9" fill="#fff"/><circle class="ep" cx="100" cy="285" r="4.2" fill="#111"/></g>
+        <g class="eye"><circle class="ew" cx="140" cy="285" r="9" fill="#fff"/><circle class="ep" cx="140" cy="285" r="4.2" fill="#111"/></g>
+        <path id="m-orange" fill="none" stroke="#111" stroke-width="3" stroke-linecap="round" d="M110 306q10 9 20 0"/>
+      </g></g>
+      <!-- kuning -->
+      <g class="drop" style="--dl:.5s"><g class="lean" id="c-yellow">
+        <path d="M285 340V252a42.5 42.5 0 0 1 85 0V340Z" fill="#f2c600"/>
+        <g class="eye"><circle class="ew" cx="310" cy="250" r="8.5" fill="#fff"/><circle class="ep" cx="310" cy="250" r="4" fill="#111"/></g>
+        <g class="eye"><circle class="ew" cx="346" cy="250" r="8.5" fill="#fff"/><circle class="ep" cx="346" cy="250" r="4" fill="#111"/></g>
+        <path id="m-yellow" fill="none" stroke="#111" stroke-width="3" stroke-linecap="round" d="M318 278h26"/>
+      </g></g>
+    </svg>
+  </section>
+
+  <section class="formwrap">
+    <div class="box">
+      <div id="resume" class="resume" hidden>
+        <span>Kamu sudah masuk sebagai <b id="resume-name"></b>.</span>
+        <button type="button" id="resume-go" class="link">Lanjutkan</button> ·
+        <button type="button" id="resume-out" class="link">Keluar</button>
+      </div>
+
+      <h2 id="title">SELAMAT DATANG!</h2>
+      <p class="sub" id="sub">Daftarkan akunmu, atau coba dulu sebagai tamu. Semua fitur tetap bisa dipakai dan GRATIS.</p>
+
+      <form id="form" data-mode="login" novalidate>
+        <label class="field only-signup">Nama lengkap
+          <input id="fullname" type="text" autocomplete="name" maxlength="60">
+        </label>
+        <label class="field">Email
+          <input id="email" type="email" autocomplete="email" autocapitalize="none" inputmode="email" required>
+        </label>
+        <label class="field">Kata sandi
+          <span class="pw">
+            <input id="pass" type="password" autocomplete="current-password" required>
+            <button type="button" id="toggle" class="eye-btn" aria-label="Tampilkan kata sandi" aria-pressed="false">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/><path class="slash" d="M4 4l16 16"/></svg>
+            </button>
+          </span>
+        </label>
+        <div class="row">
+          <label class="chk"><input type="checkbox" id="remember" checked> Ingat saya di perangkat ini</label>
+        </div>
+        <p class="msg err" id="err" role="alert"></p>
+        <p class="msg ok" id="ok" role="status"></p>
+        <button type="submit" class="main" id="submit"><span class="lbl">Masuk</span></button>
+        <button type="button" id="guest" class="ghost">Coba sebagai tamu</button>
+      </form>
+      <p class="switch"><span id="switch-q">Belum punya akun?</span> <button type="button" id="switch" class="link">Daftar</button></p>
+    </div>
+  </section>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="intro.js"></script>
+<script src="auth.js"></script>
+<script src="characters.js"></script>
+<script src="login.js"></script>
+</body>
+</html>

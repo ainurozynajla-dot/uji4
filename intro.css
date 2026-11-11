@@ -1,0 +1,35 @@
+#intro{position:fixed;inset:0;z-index:9999;background:radial-gradient(circle at 50% 45%,#0f343b,#06161a 72%);color:#cfe9e5;overflow:hidden;
+  transition:opacity .7s ease,transform .7s ease,filter .7s ease;animation:introfail 0s 12s forwards}
+#intro.out{opacity:0;transform:scale(1.05);filter:blur(8px);pointer-events:none}
+@keyframes introfail{to{visibility:hidden;opacity:0}}
+#intro canvas{position:absolute;inset:0;transition:opacity .6s ease}
+#intro canvas.fade{opacity:0}
+.in-brand{position:absolute;left:0;right:0;top:calc(46% + min(18vw,18vh,120px));text-align:center;opacity:0;transform:translateY(8px);transition:opacity .6s ease,transform .6s ease,letter-spacing 1s ease;font:700 clamp(13px,3.4vw,18px)/1.2 system-ui,sans-serif;letter-spacing:.2em}
+.in-brand small{display:block;margin-top:8px;font-weight:500;font-size:.62em;letter-spacing:.3em;color:#f4b73f}
+.in-brand.show{opacity:1;transform:none;letter-spacing:.34em}
+.in-brand.gone{opacity:0;transform:translateY(-6px)}
+.in-skip{position:absolute;right:14px;top:calc(12px + env(safe-area-inset-top,0px));font:11px system-ui,sans-serif;letter-spacing:.12em;color:#7fb9b3;opacity:.7}
+body.intro-on .page{opacity:0}
+body.intro-done .info,body.intro-done .box{animation:introrise .9s cubic-bezier(.2,.7,.2,1) both}
+body.intro-done .box{animation-delay:.12s}
+body.intro-done .page{opacity:1}
+@keyframes introrise{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){#intro{display:none}body.intro-on .page{opacity:1}}
+
+/* loading bar ala game */
+.gl{position:absolute;left:50%;top:50%;width:min(560px,88vw);transform:translate(-50%,-50%);opacity:0;transition:opacity .4s}
+.gl.show{opacity:1}
+.gl-top{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:10px;font:700 12px/1 ui-monospace,Menlo,Consolas,monospace;letter-spacing:.2em;color:#8fd9e8}
+.gl-pct{font:800 clamp(28px,7vw,42px)/1 ui-monospace,Menlo,Consolas,monospace;letter-spacing:.02em;color:#f4b73f;text-shadow:0 0 16px rgba(244,183,63,.55);font-variant-numeric:tabular-nums}
+.gl-track{position:relative;height:20px;border:2px solid #4fc3dc;border-radius:5px;padding:2px;background:rgba(3,12,14,.85);box-shadow:0 0 20px rgba(79,195,220,.28),inset 0 0 8px #000}
+.gl-fill{position:relative;height:100%;width:0;border-radius:2px;background:repeating-linear-gradient(-45deg,rgba(255,255,255,.3) 0 6px,transparent 6px 12px),linear-gradient(#ffe29a,#f4b73f 55%,#e0952b);background-size:24px 24px,100% 100%;box-shadow:0 0 14px rgba(244,183,63,.8);animation:glstripe .55s linear infinite}
+.gl-fill::after{content:"";position:absolute;right:0;top:-4px;bottom:-4px;width:8px;background:#fff;filter:blur(4px);opacity:.85}
+@keyframes glstripe{to{background-position:24px 0,0 0}}
+.gl-seg{position:absolute;inset:2px;pointer-events:none;background:repeating-linear-gradient(90deg,transparent 0 calc(5% - 2px),#06161a calc(5% - 2px) 5%)}
+.gl-truck{position:absolute;bottom:100%;left:0;margin-bottom:3px;transform:translateX(-50%);width:40px}
+.gl-truck svg{display:block;width:100%;height:auto;animation:gltruck .3s ease-in-out infinite alternate}
+@keyframes gltruck{to{transform:translateY(-1.5px)}}
+.gl-tip{margin-top:10px;text-align:center;font:600 11px/1.3 ui-monospace,Menlo,Consolas,monospace;letter-spacing:.16em;color:#7fb9b3;min-height:14px}
+.gl.done .gl-pct{color:#7cffb2;text-shadow:0 0 18px rgba(124,255,178,.6)}
+.gl.done .gl-fill{background:linear-gradient(#b8ffd6,#4be08a 55%,#25a75d);box-shadow:0 0 16px rgba(124,255,178,.8);animation:none}
+.gl.done .gl-tip{color:#7cffb2}

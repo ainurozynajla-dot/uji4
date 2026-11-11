@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Jembatan: Memahami SFD, BMD &amp; NFD</title>
+<link rel="stylesheet" href="style.css"><link rel="stylesheet" href="tema.css">
+<script src="auth.js"></script>
+<link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#0f766e"><link rel="apple-touch-icon" href="icon-192.png"><script src="install.js" defer></script>
+</head>
+<body>
+<main>
+<a class="back" href="home.html" aria-label="Kembali ke beranda"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>Kembali ke beranda</a>
+<header class="top"><div class="ttl"><span class="badge">Analisa Struktur · SFD · BMD · NFD</span><h1>Bagaimana jembatan “merasakan” beban?</h1></div><div class="who"><span>Kajian balok</span></div></header>
+<p class="sub">Hai! Mari kita bayangkan jembatan sebagai balok penopang. Pilih siapa yang lewat, atur panjang bentang dan bebannya, lalu lihat gaya-gaya di dalam jembatan berubah.</p>
+
+<div class="alert" id="alert" role="alert" hidden><span id="atext"></span><button id="rebuild">↺ Bangun ulang jembatan</button></div>
+<div class="tabs"><button class="chip on" id="tab2d">📈 Tampilan 2D (diagram)</button><button class="chip" id="tab3d">🧊 Tampilan 3D</button></div>
+<div class="card" id="card2d"><canvas id="cv"></canvas></div>
+<div class="card" id="card3d" hidden><canvas id="cv3" aria-label="Visualisasi 3D jembatan"></canvas></div>
+<div class="row" id="opt3" hidden>
+  <label class="chk"><input type="checkbox" id="o3auto" checked> Putar otomatis</label>
+  <label class="chk"><input type="checkbox" id="o3follow"> Ikuti kendaraan</label>
+  <label class="chk"><input type="checkbox" id="o3sfd" checked> SFD</label>
+  <label class="chk"><input type="checkbox" id="o3bmd" checked> BMD</label>
+  <label class="chk"><input type="checkbox" id="o3nfd" checked> NFD</label>
+  <button class="chip" data-cam="0">Samping</button><button class="chip" data-cam="1">Serong</button><button class="chip" data-cam="2">Atas</button>
+</div>
+<p class="note" id="hint3" hidden style="margin-top:6px">Geser untuk memutar, scroll atau cubit untuk zoom. Warna badan jembatan berubah dari abu-abu ke kuning lalu merah saat mendekati kapasitas.</p>
+<div class="gauge"><div class="gbar"><i id="bar"></i></div><span id="gtext"></span></div>
+<div class="row" id="veh"></div>
+<div class="row">
+  <button id="play">⏸ Jeda</button>
+  <label class="chk"><input type="checkbox" id="env" checked> Tampilkan envelope (batas maks/min)</label>
+  <label class="chk"><input type="checkbox" id="col" checked> Simulasikan keruntuhan</label>
+  <button class="chip" id="mixb">🚦 Preset arus campuran</button>
+</div>
+
+<div class="ctrl">
+  <label>Jenis struktur<select id="stype" aria-label="Jenis struktur"><option value="ss">Balok sederhana (sendi–rol)</option><option value="cant">Kantilever (jepit–bebas)</option></select></label>
+  <label>Panjang bentang: <b id="lv"></b><input type="range" id="L" min="5" max="65" step="1" value="20"></label>
+  
+  
+  
+  <label>Kapasitas momen jembatan: <b id="cmv"></b><input type="range" id="cm" min="50" max="8000" step="10" value="1500"></label>
+  <label>Kapasitas geser jembatan: <b id="cvv"></b><input type="range" id="cs" min="20" max="2000" step="10" value="350"></label>
+  <label>Posisi (depan): <b id="pv"></b><input type="range" id="pos" step="0.05"></label>
+  <label>Kecepatan: <b id="sv"></b><input type="range" id="spd" min="0.5" max="12" step="0.5" value="3"></label>
+  <label>Gaya rem (% beban): <b id="mv"></b><input type="range" id="mu" min="0" max="40" step="1" value="0"></label>
+</div>
+
+<div class="card" id="edcard" style="margin-top:14px"><h2>Atur bebanmu</h2><p>Setiap baris adalah satu beban yang lewat berurutan (baris paling atas berada paling depan). Ubah jenis, berat, dan jaraknya, atau tambah beban sebanyak yang kamu mau.</p><div id="rows"></div><div class="row"><select id="addsel" aria-label="Jenis beban"></select><button id="add">+ Tambah beban</button></div></div>
+
+<div class="card" id="statcard" style="margin-top:14px"><h2>Beban tambahan &amp; tumpuan</h2>
+<p>Tambahkan beban merata, beban segitiga (trapesium bila q awal ≠ 0), atau beban titik miring (sudut α dari sumbu balok: 90° = tegak lurus, 45° = miring ke kanan-bawah, 135° = miring ke kiri-bawah). Tumpuan tambahan membuat balok menerus (statis tak tentu).</p>
+<div class="rw"><label>Jenis beban<select id="bt" aria-label="Jenis beban tambahan"><option value="u">Merata (q)</option><option value="t">Segitiga / trapesium</option><option value="p">Titik miring</option></select></label><span id="bf" style="display:contents"></span><button id="badd">+ Tambah beban</button></div>
+<div id="blist"></div>
+<div class="rw"><label>Posisi tumpuan tambahan dari A (m)<input type="number" id="sx" min="0" step="any" value="10"></label><button id="sadd" class="chip">+ Tambah tumpuan</button><label class="chk"><input type="checkbox" id="nov"> Sembunyikan kendaraan</label></div>
+<div id="slist"></div>
+<div class="row" style="margin-top:10px"><button id="bex" class="chip">📘 Muat contoh soal (P₁ tegak + P₂ miring 45°)</button><button id="bclr" class="chip">Hapus semua beban tambahan</button></div></div>
+
+<div class="card story"><h2>Cerita saat ini</h2><p id="story"></p></div>
+
+<details class="card theory" id="theory" open><summary>Dasar teori &amp; rumus ringkas (sesuai catatan Analisa Struktur)</summary>
+<p class="note" style="margin-top:6px">Urutan kerja yang dipakai di catatan kuliah: <b>reaksi tumpuan → kontrol ΣV → gaya lintang → momen → momen maksimum di titik V = 0 → gambar SFD, BMD, NFD</b>. Blok yang sedang dipakai aplikasi ditandai “● aktif”.</p>
+<div class="thgrid">
+<div class="th"><h3>1. Syarat keseimbangan</h3>
+<div class="fx">ΣH = 0 → tidak bergerak horizontal<br>ΣV = 0 → tidak bergerak vertikal<br>ΣM = 0 → tidak berputar</div>
+<p>Reaksi tumpuan: <b>rol</b> 1 reaksi (vertikal), <b>sendi</b> 2 reaksi (V dan H), <b>jepit</b> 3 reaksi (V, H, dan momen M). Statis tertentu bila <b>3n + r = 3j</b> (n batang, r reaksi, j titik kumpul). Balok sederhana: 3·1 + 3 = 3·2 → 6 = 6 ✓.</p></div>
+<div class="th" id="th-ss"><h3>2. Balok sederhana (sendi–rol) <span class="tag">● aktif</span></h3>
+<div class="fx">ΣM<sub>B</sub> = 0 → R<sub>A</sub> = ΣP·(L − x<sub>i</sub>)/L<br>ΣM<sub>A</sub> = 0 → R<sub>B</sub> = ΣP·x<sub>i</sub>/L<br>Kontrol ΣV = 0 → R<sub>A</sub> + R<sub>B</sub> = ΣP<br>V(x) = R<sub>A</sub> − ΣP di kiri x<br>M(x) = R<sub>A</sub>·x − ΣP·(x − x<sub>i</sub>)</div>
+<p>Satu beban P di jarak a dari A (b = L − a): R<sub>A</sub> = P·b/L, M<sub>maks</sub> = R<sub>A</sub>·a = P·a·b/L (di tengah: P·L/4). V tepat sebelum beban = R<sub>A</sub> (D<sub>E1</sub>), tepat sesudahnya R<sub>A</sub> − P (D<sub>E2</sub>). Momen maksimum ada di titik V berubah tanda (dM/dx = V = 0). Beban merata q: W = q·ℓ bekerja di tengah panjang beban; beban segitiga: W = ½·q·ℓ bekerja ⅓ℓ dari sisi yang terbesar; beban miring: P<sub>y</sub> = P·sin α (masuk V dan M), P<sub>x</sub> = P·cos α (menjadi gaya normal dan ditahan sendi A). Lebih dari 2 tumpuan: statis tak tentu, reaksi dicari dengan metode fleksibilitas (lendutan di tumpuan = 0).</p></div>
+<div class="th" id="th-ct"><h3>3. Kantilever / konsol (jepit–bebas) <span class="tag">● aktif</span></h3>
+<div class="fx">ΣV = 0 → R<sub>A</sub> = ΣP<br>ΣM<sub>A</sub> = 0 → M<sub>A</sub> = −ΣP·x<sub>i</sub><br>V(x) = ΣP di kanan x<br>M(x) = −ΣP·(x<sub>i</sub> − x)</div>
+<p>Momen terbesar ada di jepitan A (tanda negatif: serat atas tertarik). Contoh catatan: F<sub>1</sub> = 475 di 2,25 m dan F<sub>2</sub> = 390 di 4,75 m → R<sub>A</sub> = 865, M<sub>A</sub> = −2921,25.</p></div>
+<div class="th"><h3>4. Gaya normal &amp; konvensi tanda</h3>
+<div class="fx">N = gaya searah sumbu balok<br>Gaya miring F: F<sub>x</sub> = F·cos α, F<sub>y</sub> = F·sin α<br>Gaya rem: H<sub>A</sub> = μ·ΣP, N(x) = μ·ΣP di kanan x</div>
+<p>Pada catatan, beban miring diuraikan dulu: F·sin α masuk hitungan V dan M, F·cos α menjadi gaya normal. Di aplikasi, N positif = tarik, geser positif digambar di atas sumbu, momen positif digambar di sisi bawah (sisi tarik).</p></div>
+</div></details>
+
+<details class="card" id="stepcard" open><summary>Langkah hitung (diperbarui langsung)</summary><div id="steps"></div></details>
+
+<div class="stats">
+  <div class="stat"><small>Geser maks (+)</small><span id="s1">–</span></div>
+  <div class="stat"><small>Geser min (−)</small><span id="s2">–</span></div>
+  <div class="stat"><small>Momen maks</small><span id="s3">–</span></div>
+  <div class="stat"><small>Gaya normal (tarik)</small><span id="s4">–</span></div>
+</div>
+
+<details class="card"><summary>Apa itu SFD, BMD, dan NFD?</summary>
+<p><b>SFD</b> (gaya geser): seberapa kuat jembatan “digunting” di setiap titik oleh beban dan tumpuan.</p>
+<p><b>BMD</b> (momen lentur): seberapa besar jembatan ingin melengkung. Makin besar, makin menuntut penampang yang kuat.</p>
+<p><b>NFD</b> (gaya normal): gaya yang menarik atau menekan sepanjang jembatan, misalnya saat kendaraan mengerem.</p>
+<p><b>Rumus dasar.</b> Balok sederhana: R<sub>A</sub> = ΣP·(L − x)/L; V(x) = R<sub>A</sub> − ΣP di kiri x; M(x) = R<sub>A</sub>·x − ΣP·(x − x<sub>i</sub>); momen maksimum terjadi di titik V berubah tanda. Kantilever: V(x) = ΣP di kanan x; M(x) = −ΣP·(x<sub>i</sub> − x).</p></details>
+
+<p class="note">Beban dibagi ke tiap gandar menurut proporsi kendaraan (panah merah = beban gandar, kN). Jarak antar beban diukur dari ujung belakang beban di depan ke ujung depan beban di belakangnya (maksimal 10 beban). Gaya rem horizontal ditahan tumpuan A (sendi atau jepit). Konvensi: geser positif di atas sumbu, momen positif digambar di sisi bawah (sisi tarik), N positif = tarik. Eksentrisitas gaya rem diabaikan.</p>
+</main>
+
+<script src="app.js"></script>
+<script src="beban.js"></script>
+<script src="view3d.js"></script>
+<script src="tema.js"></script><script src="tema-anim.js"></script></body>
+</html>

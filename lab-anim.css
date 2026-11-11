@@ -1,0 +1,54 @@
+/* lab-anim.css : animasi teks & interaksi untuk halaman laboratorium (index.html) */
+@keyframes lwordup{from{transform:translateY(110%) rotate(4deg);opacity:0;filter:blur(5px)}to{transform:none;opacity:1;filter:none}}
+@keyframes lrise{from{opacity:0;transform:translateY(14px)}}
+@keyframes lshim{to{background-position:-200% 0}}
+@keyframes lcaret{50%{opacity:0}}
+
+/* kata naik satu per satu */
+.lw{display:inline-block;overflow:hidden;vertical-align:top;padding:.05em .02em .18em;margin:-.05em -.02em -.18em}
+.lw>i{display:inline-block;font-style:normal;animation:lwordup .8s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--i)*.07s + var(--b,0s))}
+
+/* logo: huruf bergelombang lalu berkilau terus-menerus */
+.brand{display:inline-block}
+.brand .lt{display:inline-block;animation:lwordup .7s cubic-bezier(.2,1.2,.3,1) both;animation-delay:calc(var(--i)*.05s)}
+.brand.shine{background:linear-gradient(100deg,var(--gold) 30%,#fff 50%,var(--gold) 70%);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:lshim 4.5s linear infinite}
+.brand.shine .lt{animation:none}
+.brand:hover .lt{animation:lhop .5s calc(var(--i)*.04s) cubic-bezier(.2,1.4,.4,1)}
+@keyframes lhop{40%{transform:translateY(-6px)}}
+
+/* nama pengguna & tips: diketik */
+.typing::after{content:"";display:inline-block;width:2px;height:1em;margin-left:2px;vertical-align:-.15em;background:var(--gold);animation:lcaret .8s steps(1) infinite}
+.hello{min-height:1.4em}
+
+/* tombol menu: judul naik per kata, deskripsi menyusul, garis menyapu saat aktif */
+nav button{position:relative;overflow:hidden;transition:transform .2s cubic-bezier(.2,.8,.2,1),background .3s,color .3s,border-color .3s,box-shadow .3s}
+nav button>span{animation:lrise .7s both;animation-delay:calc(.35s + var(--k,0)*.12s)}
+nav button:hover{transform:translateX(4px)}
+nav button:active{transform:scale(.97)}
+nav button::after{content:"";position:absolute;left:0;bottom:0;height:3px;width:100%;background:linear-gradient(90deg,var(--gold),var(--acc));transform:scaleX(0);transform-origin:left;transition:transform .45s cubic-bezier(.2,.8,.2,1)}
+nav button[aria-pressed=true]::after{transform:scaleX(1)}
+nav button[aria-pressed=true]{box-shadow:0 8px 22px rgba(244,183,63,.28)}
+nav button .lw>i{transition:color .3s}
+.rip{position:absolute;border-radius:50%;background:rgba(20,160,168,.35);transform:scale(0);animation:lrip .6s ease-out forwards;pointer-events:none}
+@keyframes lrip{to{transform:scale(1);opacity:0}}
+
+/* kotak tips & kamus */
+.tip{animation:lrise .8s .9s both}
+.tip b{display:inline-block;animation:lwig 3.5s ease-in-out 2s infinite}
+@keyframes lwig{0%,12%,100%{transform:none}4%{transform:rotate(-6deg)}8%{transform:rotate(6deg)}}
+.gloss[open] dt,.gloss[open] dd{animation:lrise .45s both}
+.gloss[open] dt:nth-of-type(2),.gloss[open] dd:nth-of-type(2){animation-delay:.06s}.gloss[open] dt:nth-of-type(3),.gloss[open] dd:nth-of-type(3){animation-delay:.12s}
+.gloss[open] dt:nth-of-type(4),.gloss[open] dd:nth-of-type(4){animation-delay:.18s}.gloss[open] dt:nth-of-type(5),.gloss[open] dd:nth-of-type(5){animation-delay:.24s}
+.foot button{transition:border-color .2s,transform .15s,background .2s}.foot button:active{transform:scale(.94)}
+.foot a{background:linear-gradient(currentColor,currentColor) left bottom/0 1.5px no-repeat;transition:background-size .35s}.foot a:hover{background-size:100% 1.5px}
+
+/* ganti kajian: konten masuk dengan halus */
+main section:not([hidden]){animation:lsec .55s cubic-bezier(.2,.8,.2,1)}
+@keyframes lsec{from{opacity:0;transform:translateY(16px)}}
+
+@media (prefers-reduced-motion:reduce){
+  .lw>i,.brand .lt,nav button>span,.tip,.tip b,.gloss[open] dt,.gloss[open] dd,main section:not([hidden]){animation:none!important}
+  .brand.shine{animation:none;background:none;-webkit-text-fill-color:currentColor}
+  .typing::after{animation:none}
+}
+

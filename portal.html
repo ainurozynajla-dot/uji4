@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bagaimana portal “merasakan” beban?</title>
+<link rel="stylesheet" href="style.css"><link rel="stylesheet" href="tema.css">
+<script src="auth.js"></script>
+<link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#0f766e"><link rel="apple-touch-icon" href="icon-192.png"><script src="install.js" defer></script>
+</head>
+<body data-mode="portal">
+<main>
+<a class="back" href="home.html" aria-label="Kembali ke beranda"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>Kembali ke beranda</a>
+<header class="top"><div class="ttl"><span class="badge">Analisa Struktur · Portal</span><h1>Bagaimana portal “merasakan” beban?</h1></div><div class="who"><span>Kajian portal</span></div></header>
+<p class="sub">Portal punya dua kolom dan satu balok atas yang kaku. Geser beban P, tambahkan gaya horizontal F, lalu lihat SFD, BMD, dan NFD mengikuti bentuk portal.</p>
+
+<div class="tabs"><button class="chip on" id="t2">📈 Tampilan 2D</button><button class="chip" id="t3">🧊 Tampilan 3D</button></div>
+<div class="card" id="card2d"><canvas id="cv" aria-label="Struktur dengan diagram gaya dalam"></canvas></div>
+<div class="row">
+  <button id="play">⏸ Jeda</button>
+  <label class="chk"><input type="checkbox" id="cV" checked> SFD</label>
+  <label class="chk"><input type="checkbox" id="cM" checked> BMD</label>
+  <label class="chk"><input type="checkbox" id="cN"> NFD</label>
+</div>
+<p class="note">Geser untuk menyesuaikan parameter. Diagram positif digambar di sisi kiri arah batang A→B. Konvensi: N negatif = tekan.</p>
+
+<div class="ctrl" id="ctrl"></div>
+
+<div class="card story"><h2>Cerita saat ini</h2><p id="story"></p></div>
+
+<details class="card" id="theory" open><summary>Dasar teori &amp; rumus ringkas</summary><div class="thgrid"><div class="th"><h3>Reaksi tumpuan</h3><div class="fx">V<sub>B</sub> = (qL²/2 + P·a + F·z)/L<br>V<sub>A</sub> = qL + P − V<sub>B</sub><br>H<sub>A</sub> = −F</div><p>A sendi, B rol, sambungan atas kaku. Statis tertentu.</p></div>
+<div class="th"><h3>Gaya dalam</h3><div class="fx">Kolom kiri: N = −V<sub>A</sub>, M = F·min(y, z)<br>Balok: V = V<sub>A</sub> − qx − P·I(x ≥ a)<br>M = F·z + V<sub>A</sub>x − qx²/2 − P·max(0, x − a)<br>Kolom kanan: N = −V<sub>B</sub>, M = 0</div><p>Momen di sambungan kolom–balok berpindah utuh (sambungan kaku).</p></div></div></details>
+
+<details class="card" open><summary>Langkah hitung (diperbarui langsung)</summary><div id="steps"></div></details>
+
+<div class="stats">
+  <div class="stat"><small>Reaksi vertikal A</small><span id="s1">–</span></div>
+  <div class="stat"><small>Reaksi vertikal B</small><span id="s2">–</span></div>
+  <div class="stat"><small>Momen |M| maks</small><span id="s3">–</span></div>
+  <div class="stat"><small>Gaya normal |N| maks</small><span id="s4">–</span></div>
+</div>
+
+<p class="note">Analisis orde pertama: A sendi, B rol. Beban merata dan P vertikal di balok atas, F horizontal di kolom kiri. Aplikasi untuk pembelajaran, bukan dasar tunggal perencanaan struktur. Satuan kN dan m.</p>
+</main>
+<script src="struktur.js"></script>
+<script src="tema.js"></script><script src="tema-anim.js"></script></body>
+</html>

@@ -1,0 +1,263 @@
+/* =====================================================================
+   home-anim.css : revisi beranda ANSTRUCEDU
+   1) palet warna (bisa diganti dari tombol "Warna", disimpan di localStorage
+      dengan kunci yang sama dengan simulator: anstru_pal)
+   2) animasi pembuka (intro)
+   3) animasi teks (kata naik, gradien berkilau, ketikan)
+   4) animasi tombol (kilau, riak, magnet, denyut)
+   5) ruang kelas yang bergerak (paralaks, awan, jam asli, kapur, truk mainan)
+   ===================================================================== */
+
+/* ---------- 1. PALET WARNA ---------- */
+:root{
+  --g1:#0e7c86;--g2:#2bb5bd;--sig1:#ffd166;--sig2:#f4b73f;--sigfg:#0b3b41;--sigrgb:244,183,63;
+  --b1:20,160,168;--b2:244,183,63;--b3:96,165,250;--b4:14,124,134;--mbase:#eaf3f4;
+  --t1:var(--g1);--t2:var(--g2);
+  --wall:#efe3cb;--board:#1f4d45;--pill:#0b3b41;--rf:#c9a26b;--rl:#b58d57;--wd:#8a5a2b;--wd2:#a8733a;--wd3:#5b3a18;--glass:#bfe3ee;--sun:#f4b73f;--sunr:#f4b73f;--lightc:#fff7d6;
+  --mesh:radial-gradient(900px 520px at 8% -6%,rgba(var(--b1),.30),transparent 60%),radial-gradient(760px 480px at 96% 4%,rgba(var(--b2),.24),transparent 62%),radial-gradient(900px 600px at 78% 100%,rgba(var(--b3),.22),transparent 60%),radial-gradient(700px 500px at 0% 90%,rgba(var(--b4),.16),transparent 60%),var(--mbase);
+}
+@media (prefers-color-scheme:dark){:root{--mbase:#08171b;--t1:var(--g2);--t2:color-mix(in srgb,var(--g2) 55%,#fff);
+  --mesh:radial-gradient(900px 520px at 8% -6%,rgba(var(--b1),.38),transparent 60%),radial-gradient(760px 480px at 96% 4%,rgba(var(--b2),.13),transparent 62%),radial-gradient(900px 600px at 78% 100%,rgba(var(--b3),.24),transparent 60%),radial-gradient(700px 500px at 0% 90%,rgba(var(--b4),.24),transparent 60%),var(--mbase)}}
+
+
+/* Senja */
+html[data-pal=senja]{--g1:#c2410c;--g2:#f59e0b;--signal:#fb923c;--sig1:#ffd6a5;--sig2:#fb923c;--sigfg:#431407;--sigrgb:251,146,60;
+  --b1:251,146,60;--b2:244,63,94;--b3:250,204,21;--b4:194,65,12;--mbase:#fbefe4;
+  --paper:#faf0e8;--ink:#3b1707;--steel:#7a5a4c;--line:#ecd5c5;--v:#7c3aed;--m:#e11d48;--n:#0d9488;
+  --wall:#f6dcc3;--board:#4a2a1c;--pill:#3b1707}
+/* Lembayung */
+html[data-pal=lembayung]{--g1:#6d28d9;--g2:#a78bfa;--signal:#d946ef;--sig1:#f5d0fe;--sig2:#e879f9;--sigfg:#3b0764;--sigrgb:217,70,239;
+  --b1:167,139,250;--b2:244,114,182;--b3:96,165,250;--b4:109,40,217;--mbase:#f1ebfb;
+  --paper:#f3eefb;--ink:#25104f;--steel:#6a5b8a;--line:#ddd3f0;--v:#2563eb;--m:#db2777;--n:#059669;
+  --wall:#e6dcf5;--board:#2d2556;--pill:#25104f}
+/* Ramah buta warna (palet Okabe-Ito, sama dengan simulator) */
+html[data-pal=aman]{--g1:#0072b2;--g2:#56b4e9;--signal:#f0e442;--sig1:#fff59d;--sig2:#f0e442;--sigfg:#1a1a1a;--sigrgb:240,228,66;
+  --b1:86,180,233;--b2:240,228,66;--b3:0,158,115;--b4:0,114,178;--mbase:#eaf2f7;
+  --paper:#eef3f7;--ink:#0a2a3f;--steel:#4a6272;--line:#cdd9e2;--v:#0072b2;--m:#d55e00;--n:#009e73;
+  --wall:#e3edf3;--board:#1c3b52;--pill:#0a2a3f}
+@media (prefers-color-scheme:dark){
+  html[data-pal=senja]{--paper:#1f1410;--sheet:#2c1d16;--ink:#f8ece4;--steel:#c9ab9b;--line:#4a3226;--v:#a78bfa;--m:#fb7185;--n:#2dd4bf;--mbase:#150d09}
+  html[data-pal=lembayung]{--paper:#17112b;--sheet:#221a3d;--ink:#efe9fb;--steel:#b4a8d6;--line:#3b2f63;--v:#60a5fa;--m:#f472b6;--n:#34d399;--mbase:#0f0a1f}
+  html[data-pal=aman]{--paper:#0c1822;--sheet:#132431;--ink:#e8f1f7;--steel:#9db4c4;--line:#28404f;--v:#56b4e9;--m:#f0883e;--n:#2fd1a0;--mbase:#07121a}
+}
+/* warna bawaan yang tadinya ditulis mati di home.html sekarang ikut palet */
+body{background:var(--mesh) fixed}
+.brand i,.nav .btn,.mod .go{color:var(--sigfg)}
+.nav .btn{background:var(--signal)}
+.btn{background:linear-gradient(135deg,var(--sig1),var(--sig2));color:var(--sigfg);box-shadow:0 8px 22px rgba(var(--sigrgb),.42)}
+.btn:active{box-shadow:0 2px 8px rgba(var(--sigrgb),.4)}
+.mod .go{background:var(--signal)}
+.hot .ring{fill:var(--sig1)}
+.mode button[aria-pressed=true],.tb button[aria-selected=true],.jump button[aria-pressed=true]{background:linear-gradient(135deg,color-mix(in srgb,var(--g1) 50%,#000),var(--g1));color:#fff}
+.end{background:radial-gradient(500px 300px at 90% 0%,rgba(var(--sigrgb),.35),transparent 62%),linear-gradient(135deg,color-mix(in srgb,var(--g1) 45%,#000),var(--g1) 70%,var(--g2))}
+.phone{border-color:color-mix(in srgb,var(--g1) 40%,#000);box-shadow:0 26px 60px rgba(var(--b1),.3)}
+.drafting,.explore,.pnl,.ex,.quiz,.flow,.mod,.scr .card2{box-shadow:0 12px 36px rgba(var(--b1),.14),inset 0 1px 0 rgba(255,255,255,.5)}
+.chips button[aria-pressed=true][data-k=V]{background:var(--v);border-color:var(--v)}
+/* ruang kelas ikut palet */
+.stage{background:var(--wall)}
+.stage rect[fill="#efe3cb"]{fill:var(--wall)}
+.stage rect[fill="#c9a26b"]{fill:var(--rf)}
+.stage [stroke="#b58d57"]{stroke:var(--rl)}
+.stage [fill="#8a5a2b"]{fill:var(--wd)}.stage [stroke="#8a5a2b"]{stroke:var(--wd)}
+.stage [fill="#a8733a"]{fill:var(--wd2)}.stage [stroke="#a8733a"]{stroke:var(--wd2)}
+.stage [fill="#5b3a18"]{fill:var(--wd3)}.stage [stroke="#5b3a18"]{stroke:var(--wd3)}
+.stage rect[fill="#bfe3ee"]{fill:var(--glass)}
+.stage .sun{fill:var(--sun)}.stage .rays path{stroke:var(--sunr)}
+#beamg stop{stop-color:var(--lightc)}
+.mote{fill:var(--lightc)!important}
+.pintu i{background:linear-gradient(90deg,var(--wd),var(--wd2))!important}
+.stage rect[fill="#1f4d45"]{fill:var(--board)}
+.stage rect[fill="#0b3b41"]{fill:var(--pill)}
+.stage [stroke="#0e7c86"]{stroke:var(--g1)}
+.stage [stroke="#16834a"]{stroke:var(--n)}
+.stage [stroke="#dc2626"]{stroke:var(--m)}
+.stage rect[fill="#0e7c86"]{fill:var(--g1)}
+
+/* ganti warna: transisi halus */
+::view-transition-old(root),::view-transition-new(root){animation-duration:.55s}
+
+/* tombol Warna di navigasi */
+.pal{position:relative}
+.pal-btn{display:inline-flex;align-items:center;gap:8px;min-height:38px;padding:5px 12px 5px 6px;border-radius:999px;border:1.5px solid var(--line);background:color-mix(in srgb,var(--sheet) 60%,transparent);color:var(--ink);font:600 .88rem Figtree,sans-serif;cursor:pointer;transition:border-color .2s,transform .2s}
+.pal-btn:hover{border-color:var(--g1);transform:translateY(-1px)}
+.pal-dot{width:24px;height:24px;border-radius:50%;background:conic-gradient(from 200deg,var(--g1),var(--g2),var(--sig2),var(--g1));box-shadow:inset 0 0 0 2px rgba(255,255,255,.6);transition:transform .6s cubic-bezier(.2,.8,.2,1)}
+.pal-btn[aria-expanded=true] .pal-dot{transform:rotate(180deg)}
+.pal-menu{position:absolute;right:0;top:calc(100% + 10px);width:236px;padding:10px;border-radius:18px;background:color-mix(in srgb,var(--sheet) 90%,transparent);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);border:1px solid var(--line);box-shadow:0 22px 50px rgba(0,0,0,.22);transform-origin:top right;animation:palin .22s cubic-bezier(.2,.8,.2,1);z-index:40}
+.pal-menu[hidden]{display:none}
+.pal-menu p{margin:2px 6px 8px;font-size:.78rem;color:var(--steel);letter-spacing:.04em}
+.pal-menu button{display:flex;align-items:center;gap:12px;width:100%;min-height:44px;padding:6px 10px;border:2px solid transparent;border-radius:12px;background:transparent;color:var(--ink);font:600 .92rem Figtree,sans-serif;cursor:pointer;text-align:left;transition:background .2s,transform .15s}
+.pal-menu button:hover{background:color-mix(in srgb,var(--g1) 12%,transparent);transform:translateX(3px)}
+.pal-menu button[aria-pressed=true]{border-color:var(--g1);background:color-mix(in srgb,var(--g1) 10%,transparent)}
+.pal-menu .sw{flex:none;width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--a),var(--b));box-shadow:inset 0 0 0 2px rgba(255,255,255,.7),0 0 0 1px rgba(0,0,0,.15)}
+.pal-menu .sw[data-k=laut]{--a:#0e7c86;--b:#2bb5bd}.pal-menu .sw[data-k=senja]{--a:#c2410c;--b:#f59e0b}
+.pal-menu .sw[data-k=lembayung]{--a:#6d28d9;--b:#a78bfa}.pal-menu .sw[data-k=aman]{--a:#0072b2;--b:#f0e442}
+@keyframes palin{from{opacity:0;transform:scale(.92) translateY(-6px)}}
+@media (max-width:520px){.pal-btn span.lb{display:none}.pal-btn{padding:5px}.nav .wrap{gap:12px}}
+
+/* ---------- 2. INTRO ---------- */
+html:not(.hi-on) #hintro{display:none}
+#hintro{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;overflow:hidden;color:#e8f4f2;animation:hifail 0s 9s forwards}
+@keyframes hifail{to{visibility:hidden}}
+.hi-c{position:absolute;inset:0;display:flex}
+.hi-c i{flex:1;background:#06161a;transition:transform .95s cubic-bezier(.76,0,.24,1) .25s}
+.hi-c i:first-child{background:linear-gradient(90deg,#06161a,#0a2329)}
+.hi-c i:last-child{background:linear-gradient(90deg,#0a2329,#06161a)}
+#hintro.open .hi-c i:first-child{transform:translateX(-101%)}
+#hintro.open .hi-c i:last-child{transform:translateX(101%)}
+.hi-glow{position:absolute;left:50%;top:46%;width:min(900px,120vw);aspect-ratio:1;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(var(--b1),.34),transparent 62%);animation:higlow 3s ease-in-out both}
+@keyframes higlow{from{opacity:0;transform:translate(-50%,-50%) scale(.5)}to{opacity:1}}
+.hi-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(143,217,232,.09) 1px,transparent 1px),linear-gradient(90deg,rgba(143,217,232,.09) 1px,transparent 1px);background-size:44px 44px;-webkit-mask-image:radial-gradient(circle at 50% 46%,#000,transparent 68%);mask-image:radial-gradient(circle at 50% 46%,#000,transparent 68%);animation:higrid 1.2s ease both}
+@keyframes higrid{from{opacity:0;background-size:120px 120px}}
+.hi-in{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:6px;width:100%;padding:0 20px;transition:opacity .45s ease,transform .6s ease,filter .45s}
+#hintro.open .hi-in{opacity:0;transform:scale(1.08);filter:blur(6px)}
+.hi-svg{width:min(560px,86vw);height:auto;overflow:visible}
+.hi-svg path{fill:none;stroke:#8fd9e8;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1;stroke-dashoffset:1;animation:hidraw .9s cubic-bezier(.5,0,.2,1) forwards;animation-delay:var(--d,0s)}
+.hi-svg .acc{stroke:var(--g2);filter:drop-shadow(0 0 6px var(--g2))}
+.hi-svg .deck{stroke:#e8f4f2;stroke-width:4.5}
+@keyframes hidraw{to{stroke-dashoffset:0}}
+.hi-load{animation:hidrop .7s cubic-bezier(.3,1.6,.5,1) 1.7s both}
+.hi-load path{stroke:#f4b73f;stroke-dashoffset:0;stroke-dasharray:none;animation:none;stroke-width:5}
+@keyframes hidrop{from{transform:translateY(-70px);opacity:0}to{transform:none;opacity:1}}
+.hi-brand{display:flex;margin-top:-6px;font:800 clamp(1.7rem,7vw,3.1rem)/1 Unbounded,Figtree,system-ui,sans-serif;letter-spacing:.05em}
+.hi-brand span{display:inline-block;opacity:0;animation:hiletter .8s cubic-bezier(.2,.9,.2,1) both;animation-delay:calc(.9s + var(--i)*.06s)}
+.hi-brand span:nth-child(n+8){color:var(--sig2)}
+@keyframes hiletter{from{opacity:0;transform:translateY(60%) scale(.6);filter:blur(8px)}to{opacity:1}}
+.hi-sub{margin:8px 0 0;font:600 clamp(.68rem,2.4vw,.82rem)/1.2 Figtree,system-ui,sans-serif;letter-spacing:.34em;text-transform:uppercase;color:#8fd9e8;animation:hifade .8s 1.9s both}
+@keyframes hifade{from{opacity:0;letter-spacing:.6em}}
+.hi-bar{width:min(260px,60vw);height:5px;margin-top:22px;border-radius:9px;background:rgba(143,217,232,.18);overflow:hidden;animation:hifade .5s .4s both}
+.hi-bar i{display:block;height:100%;width:0;border-radius:9px;background:linear-gradient(90deg,var(--g2),var(--sig2));box-shadow:0 0 12px var(--sig2);animation:hibar 2.5s cubic-bezier(.6,.1,.3,1) .3s forwards}
+@keyframes hibar{0%{width:0}35%{width:30%}55%{width:62%}100%{width:100%}}
+.hi-skip{position:absolute;left:0;right:0;bottom:calc(22px + env(safe-area-inset-bottom,0px));z-index:2;text-align:center;font:500 .72rem Figtree,sans-serif;letter-spacing:.18em;color:#7fb9b3;opacity:0;animation:hiskip .6s 1.2s forwards}
+@keyframes hiskip{to{opacity:.75}}
+#hintro.open .hi-skip{opacity:0;animation:none}
+/* isi halaman menunggu intro selesai */
+html.hi-on:not(.hi-go) .stage *,html.hi-on:not(.hi-go) .stage svg,html.hi-on:not(.hi-go) .kelas .wi,html.hi-on:not(.hi-go) .kelas .lead,html.hi-on:not(.hi-go) .kelas .cta .btn,html.hi-on:not(.hi-go) .kelas .typed{animation-play-state:paused!important}
+html.hi-go .nav{animation:navin .8s cubic-bezier(.2,.7,.2,1) .15s backwards}
+
+/* ---------- 3. ANIMASI TEKS ---------- */
+.kelas h1,.h1l{-webkit-text-fill-color:currentColor;background:none;color:var(--ink)}
+.split .w{display:inline-block;overflow:hidden;vertical-align:top;padding:.06em .03em .2em;margin:-.06em -.03em -.2em}
+.split .wi{display:inline-block;transform:translateY(105%);opacity:0;will-change:transform}
+@keyframes wordup{from{transform:translateY(105%) rotate(5deg);opacity:0;filter:blur(7px)}to{transform:none;opacity:1;filter:none}}
+@keyframes shimmer{to{background-position:-300% 0}}
+.split.load .wi{animation:wordup .95s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--i)*.09s + .1s)}
+.split.scroll.sp-in .wi{animation:wordup .8s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--i)*.055s)}
+.wi.grad{background:linear-gradient(100deg,var(--t1),var(--t2),var(--t1));background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
+.split.load .wi.grad{animation:wordup .95s cubic-bezier(.2,.8,.2,1) both,shimmer 5s linear infinite;animation-delay:calc(var(--i)*.09s + .1s),1.2s}
+.split.scroll.sp-in .wi.grad{animation:wordup .8s cubic-bezier(.2,.8,.2,1) both,shimmer 5s linear infinite;animation-delay:calc(var(--i)*.055s),1s}
+.typed{margin:0 0 16px;font:600 clamp(.98rem,2.3vw,1.3rem)/1.4 Unbounded,Figtree,sans-serif;color:var(--steel);animation:rise .8s .85s cubic-bezier(.2,.8,.2,1) backwards}
+.typed b{font-weight:700;color:var(--t1)}
+.caret{display:inline-block;width:3px;height:1.1em;margin-left:4px;vertical-align:-.18em;border-radius:2px;background:var(--g2);animation:caret 1s steps(1) infinite}
+@keyframes caret{50%{opacity:0}}
+@keyframes rise{from{opacity:0;transform:translateY(22px);filter:blur(5px)}}
+.kelas .lead{animation:rise .9s 1s cubic-bezier(.2,.8,.2,1) backwards}
+.kelas .cta .btn{animation:pop .7s cubic-bezier(.2,1.4,.4,1) backwards}
+.kelas .cta .btn:nth-child(1){animation-delay:1.25s}.kelas .cta .btn:nth-child(2){animation-delay:1.4s}
+@keyframes pop{from{opacity:0;transform:translateY(18px) scale(.8)}}
+
+/* ---------- 4. ANIMASI TOMBOL ---------- */
+.btn{position:relative;overflow:hidden;isolation:isolate;transform:translate(var(--mx,0px),var(--my,0px));transition:transform .28s cubic-bezier(.2,.8,.2,1),box-shadow .28s,filter .28s,background-size .4s,color .35s}
+.btn::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(105deg,transparent 30%,rgba(255,255,255,.6) 50%,transparent 70%);transform:translateX(-130%)}
+.btn:hover::before{animation:shine .85s ease}
+@keyframes shine{to{transform:translateX(130%)}}
+.btn:hover{box-shadow:0 14px 32px rgba(var(--sigrgb),.55);filter:saturate(1.12)}
+.btn:active{transform:translate(var(--mx,0px),var(--my,0px)) scale(.95)}
+.btn .ar{display:inline-block;margin-left:8px;font-style:normal;transition:transform .3s cubic-bezier(.2,.8,.2,1)}
+.btn:hover .ar,.btn:focus-visible .ar{transform:translateX(6px)}
+.btn:not(.ghost):not(.sm):not(.fab){animation:btnpulse 2.6s ease-in-out 2.4s infinite}
+.btn:hover,.btn:focus-visible{animation:none!important}
+@keyframes btnpulse{0%,100%{box-shadow:0 8px 22px rgba(var(--sigrgb),.42),0 0 0 0 rgba(var(--sigrgb),.5)}60%{box-shadow:0 8px 22px rgba(var(--sigrgb),.42),0 0 0 14px rgba(var(--sigrgb),0)}}
+.kelas .cta .btn:not(.ghost){animation:pop .7s cubic-bezier(.2,1.4,.4,1) 1.25s backwards,btnpulse 2.6s ease-in-out 3s infinite}
+.btn.ghost{background-color:rgba(255,255,255,.3);background-image:linear-gradient(var(--ink),var(--ink));background-repeat:no-repeat;background-position:left;background-size:0% 100%}
+.btn.ghost:hover{background-size:100% 100%;color:var(--paper);box-shadow:inset 0 0 0 1.5px var(--ink)}
+.rip{position:absolute;z-index:-1;border-radius:50%;background:rgba(255,255,255,.65);transform:scale(0);animation:rip .65s ease-out forwards;pointer-events:none}
+@keyframes rip{to{transform:scale(1);opacity:0}}
+.mode button,.tb button,.jump button,.chips button,.opts button,.bar button{transition:transform .18s cubic-bezier(.2,.8,.2,1),background .25s,color .25s,border-color .25s}
+.mode button:hover,.tb button:hover,.jump button:hover,.chips button:hover{transform:translateY(-2px)}
+.mode button:active,.tb button:active,.jump button:active,.chips button:active{transform:scale(.93)}
+.mod .go,.mod h3{transition:transform .25s}
+
+/* ---------- 5. RUANG KELAS BERGERAK ---------- */
+.stage svg .ly-far{transform:translate(calc(var(--px,0)*-3px),calc(var(--py,0)*-2px))}
+.stage svg .ly-mid{transform:translate(calc(var(--px,0)*-8px),calc(var(--py,0)*-5px))}
+.stage svg .ly-near{transform:translate(calc(var(--px,0)*-15px),calc(var(--py,0)*-9px))}
+.stage svg .ly-top{transform:translate(calc(var(--px,0)*-22px),calc(var(--py,0)*-12px))}
+.stage .ly-mid .lift,.stage .ly-near .lift{transition:transform .25s}
+/* matahari, awan, sinar */
+.rays{animation:spin 24s linear infinite}
+.sun{animation:sunpulse 3.2s ease-in-out infinite;transform-origin:170px 105px}
+@keyframes sunpulse{50%{transform:scale(1.08)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+.cloud{animation:cloud 26s linear infinite}
+.cloud.c2{animation-duration:38s;animation-delay:-14s}
+@keyframes cloud{from{transform:translateX(-70px)}to{transform:translateX(240px)}}
+.beam{animation:beam 5s ease-in-out infinite}
+@keyframes beam{50%{opacity:.55}}
+.mote{fill:#fff7d6;opacity:0;animation:mote 8s ease-in-out infinite}
+.mote:nth-child(2n){animation-duration:11s;animation-delay:-3s}.mote:nth-child(3n){animation-duration:9.5s;animation-delay:-6s}.mote:nth-child(5n){animation-duration:13s;animation-delay:-9s}
+@keyframes mote{0%{transform:translate(0,0);opacity:0}20%{opacity:.85}60%{transform:translate(18px,-34px);opacity:.6}100%{transform:translate(-10px,-70px);opacity:0}}
+/* jam: waktu sungguhan, JS mengisi animation-delay */
+.hh,.mh,.sh{transform-origin:0 0;animation:spin linear infinite}
+.hh{animation-duration:43200s}.mh{animation-duration:3600s}.sh{animation-duration:60s;animation-timing-function:steps(60)}
+/* papan tulis: kapur menggambar, beban berjalan */
+.ch{stroke-dasharray:1;stroke-dashoffset:1;animation:chalk 8s ease-in-out infinite}
+.ch.c2{animation-delay:.5s}
+@keyframes chalk{0%{stroke-dashoffset:1}22%,80%{stroke-dashoffset:0}100%{stroke-dashoffset:-1}}
+.ldw{animation:ldmove 6s ease-in-out infinite alternate}
+@keyframes ldmove{from{transform:translateX(-135px)}to{transform:translateX(135px)}}
+.bnc{animation:bnc .9s ease-in-out infinite alternate}
+@keyframes bnc{to{transform:translateY(7px)}}
+.blink{animation:blink 2.2s ease-in-out infinite}
+@keyframes blink{50%{opacity:.35}}
+/* kertas di meja melayang pelan */
+.bob{animation:bob 3.4s ease-in-out infinite alternate}
+.bob.b2{animation-delay:-1.1s}.bob.b3{animation-delay:-2.2s}
+@keyframes bob{to{transform:translateY(-6px) rotate(-1.5deg)}}
+/* pesawat kertas dan truk mainan melintas */
+.plane{pointer-events:none;animation:fly 17s linear 2.5s infinite}
+@keyframes fly{0%{transform:translate(-70px,310px) rotate(-8deg)}35%{transform:translate(340px,150px) rotate(4deg)}70%{transform:translate(740px,230px) rotate(-5deg)}100%{transform:translate(1090px,120px) rotate(6deg)}}
+.toy{pointer-events:none;animation:drive 19s linear 1s infinite}
+@keyframes drive{from{transform:translateX(-90px)}to{transform:translateX(1060px)}}
+.toyb{animation:bump .32s ease-in-out infinite alternate}
+@keyframes bump{to{transform:translateY(-1.6px)}}
+.wh{animation:spin .55s linear infinite}
+
+/* ---------- 6. PRATINJAU HP BERGERAK ---------- */
+.demo2 .phone,.demo2 .phone.rv.in{transform:perspective(900px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));transition:transform .25s ease-out,opacity .6s ease;animation:phfloat 6s ease-in-out infinite,phglow 4s ease-in-out infinite}
+@keyframes phfloat{50%{translate:0 -10px}}
+@keyframes phglow{0%,100%{box-shadow:0 26px 60px rgba(var(--b1),.3),0 0 0 0 rgba(var(--b1),.0)}50%{box-shadow:0 34px 70px rgba(var(--b1),.5),0 0 38px 4px rgba(var(--b1),.35)}}
+.phone::before{animation:notch 5s ease-in-out infinite}
+@keyframes notch{0%,92%,100%{width:84px;margin-left:-42px}96%{width:92px;margin-left:-46px}}
+.phone:not(.in) .scr *{animation-play-state:paused}
+.phone.in .scr.fresh h3{animation:rise .7s cubic-bezier(.2,.8,.2,1) backwards}
+.phone.in .scr.fresh small{animation:rise .7s .1s cubic-bezier(.2,.8,.2,1) backwards}
+.phone.in .scr.fresh .card2{animation:pop .7s .2s cubic-bezier(.2,1.4,.4,1) backwards}
+.phone.in .scr.fresh .chips button{animation:pop .5s cubic-bezier(.2,1.4,.4,1) backwards}
+.phone.in .scr.fresh .chips button:nth-child(1){animation-delay:.45s}.phone.in .scr.fresh .chips button:nth-child(2){animation-delay:.55s}.phone.in .scr.fresh .chips button:nth-child(3){animation-delay:.65s}
+.phone.in .scr.fresh .bar{animation:barup .6s .5s cubic-bezier(.2,.8,.2,1) backwards}
+@keyframes barup{from{transform:translateY(100%)}}
+.scr .dg{stroke-dasharray:1;stroke-dashoffset:1}
+.phone.in .scr .dg{animation:dgdraw 1.1s cubic-bezier(.5,0,.2,1) .35s forwards,dgfill .9s .8s backwards}
+@keyframes dgdraw{to{stroke-dashoffset:0}}
+@keyframes dgfill{from{fill-opacity:0}}
+.pbnc{animation:bnc .9s ease-in-out infinite alternate}
+.pnote{animation:wipe .7s cubic-bezier(.4,0,.2,1) backwards}
+@keyframes wipe{from{clip-path:inset(0 100% 0 0);opacity:0}to{clip-path:inset(0 0 0 0)}}
+.chips button{transition:transform .18s cubic-bezier(.2,.8,.2,1),background .25s,border-color .25s,color .25s}
+.chips button:active{transform:scale(.9)}
+.bar button{transition:color .25s,border-color .3s,background .25s}
+.bar button[aria-selected=true]{animation:tabpop .4s cubic-bezier(.2,1.4,.4,1)}
+@keyframes tabpop{from{transform:translateY(5px)}}
+
+/* ---------- gerak dikurangi ---------- */
+@media (prefers-reduced-motion:reduce){
+  .split .wi{transform:none;opacity:1;animation:none!important}
+  .wi.grad{animation:none!important}
+  .typed,.kelas .lead,.kelas .cta .btn,.btn,.hi-in{animation:none!important}
+  .btn::before{display:none}
+  .demo2 .phone,.demo2 .phone.rv.in,.phone::before,.pbnc,.pnote,.scr *,.rays,.sun,.cloud,.beam,.mote,.ch,.ldw,.bnc,.blink,.bob,.plane,.toy,.toyb,.wh{animation:none!important}
+  .ch,.scr .dg{stroke-dasharray:none;stroke-dashoffset:0}
+  .mote{opacity:0}.plane,.toy{display:none}
+  .stage svg .ly-far,.stage svg .ly-mid,.stage svg .ly-near{transform:none}
+  .caret{animation:none}
+}
